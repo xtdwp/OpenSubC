@@ -150,9 +150,14 @@
     <ClCompile Include="fluids.cpp" />
     <ClCompile Include="geometry.cpp" />
     <ClCompile Include="initialize.cpp" />
+    <ClCompile Include="InputData.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="output.cpp" />
     <ClCompile Include="settings.cpp" />
+    <ClCompile Include="tinystr.cpp" />
+    <ClCompile Include="tinyxml.cpp" />
+    <ClCompile Include="tinyxmlerror.cpp" />
+    <ClCompile Include="tinyxmlparser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="calculations.h" />
@@ -163,8 +168,11 @@
     <ClInclude Include="fluids.h" />
     <ClInclude Include="geometry.h" />
     <ClInclude Include="initialize.h" />
+    <ClInclude Include="InputData.h" />
     <ClInclude Include="output.h" />
     <ClInclude Include="settings.h" />
+    <ClInclude Include="tinystr.h" />
+    <ClInclude Include="tinyxml.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
