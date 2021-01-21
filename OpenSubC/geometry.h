@@ -7,6 +7,7 @@ namespace opensubc {
 	class channel;
 
 	namespace geometry {
+		double boundaryHeight, boundaryWidth;
 		std::vector<fuelRod> rods;
 		std::vector<gap> gaps;
 		std::vector<channel> channels;
