@@ -14,6 +14,8 @@ public:
 
 	bool readXml();
 	void coutXml();
+
+	void readRod();
 };
 
 #endif

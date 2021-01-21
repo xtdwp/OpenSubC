@@ -1,9 +1,20 @@
 #pragma once
+#include <vector>
 
 namespace opensubc {
 	class fuelRod;
 	class gap;
 	class channel;
+
+	namespace geometry {
+		std::vector<fuelRod> rods;
+		std::vector<gap> gaps;
+		std::vector<channel> channels;
+	}
+
+	void initialize_geometry();
+	//void read_geometry_xml();
+	void finalize_geometry();
 }
 
 /**********燃料棒、间隙与通道定义**********/

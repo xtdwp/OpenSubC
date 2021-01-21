@@ -24,3 +24,13 @@ opensubc::channel::~channel()
 {
 
 }
+
+void opensubc::initialize_geometry()
+{
+
+}
+
+void opensubc::finalize_geometry()
+{
+
+}

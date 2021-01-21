@@ -27,9 +27,9 @@ namespace opensubc {
 
 	/**********************功能函数**********************/
 
-	void initializeCalculation();
-	void readCalculationXml();
-
+	void initialize_calculation();
+	//void read_calculation_xml();
+	void finalize_calculation();
 } // namespace opensubc
 
 /*********数据结构体定义*********/
