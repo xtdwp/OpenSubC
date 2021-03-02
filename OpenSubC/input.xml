@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<input>
+<OperatingConditions>         <!--运行工况-->
+  <TIN>300</TIN>              <!--入口温度（K）-->
+  <VIN>1</VIN>                <!--入口流速（m/s）-->
+  <PIN>15.5</PIN>             <!--入口压力（MPa）-->
+  <TSTEP>0.001</TSTEP>        <!--时间步长-->   
+  <TEND>30</TEND>             <!--总时间-->
+</OperatingConditions>
+<GeometricParameter>          <!--几何参数-->
+  <HBOUND>5</HBOUND>          
+  <WBOUND>4</WBOUND>
+  <NROD>4</NROD>              <!--燃料棒数-->
+  <ROD id="1">
+  <X>0</X>                    <!--X坐标(mm)-->
+  <Y>0</Y>
+  <RROD>4.75</RROD>           <!--燃料棒半径-->
+  <Q>67</Q>                   <!--面热功率（MW/m2）-->
+  </ROD>
+  <ROD id="2">
+  <X>11</X>
+  <Y>0</Y>
+  <RROD>4.75</RROD>
+  <Q>67</Q>
+  </ROD>
+  <ROD id="3">
+  <X>0</X>
+  <Y>11</Y>
+  <RROD>4.75</RROD>
+  <Q>67</Q>
+  </ROD>
+  <ROD id="4">
+  <X>11</X>
+  <Y>11</Y>
+  <RROD>4.75</RROD>
+  <Q>67</Q>
+  </ROD>
+  <NCHANL>9</NCHANL>          <!--子通道数-->
+  <LCHANL>3660</LCHANL>       <!--通道轴向长度（mm）-->
+  <NDX>30</NDX>               <!--轴向分段数-->
+  <CHANL id="1">
+  <RODID>1</RODID>
+  </CHANL>
+  <CHANL id="2">
+  <RODID>1</RODID>
+  <RODID>2</RODID>
+  </CHANL>
+  <CHANL id="3">
+  <RODID>2</RODID>
+  </CHANL>
+  <CHANL id="4">
+  <RODID>1</RODID>
+  <RODID>3</RODID>
+  </CHANL>
+  <CHANL id="5">
+  <RODID>1</RODID>
+  <RODID>2</RODID>
+  <RODID>3</RODID>
+  <RODID>4</RODID>
+  </CHANL>
+  <CHANL id="6">
+  <RODID>2</RODID>
+  <RODID>4</RODID>
+  </CHANL>
+  <CHANL id="7">
+  <RODID>3</RODID>
+  </CHANL>
+  <CHANL id="8">
+  <RODID>3</RODID>
+  <RODID>4</RODID>
+  </CHANL>
+  <CHANL id="9">
+  <RODID>4</RODID>
+  </CHANL>
+</GeometricParameter>
+<FuelHeatingModels>           <!--燃料棒内部温度分布计算（CRTN燃料加热模型）-->
+  <DOG>10.86</DOG>            <!--包壳外径(mm)-->
+  <DIG>9.86</DIG>             <!--包壳内径（mm）-->
+  <DP>8.2</DP>                <!--芯块直径（mm）-->
+  <SCRUD>0.03</SCRUD>         <!--杂质厚度（mm）-->
+  <SOX>0.04</SOX>             <!--氧化层厚度（mm）-->
+  <KG>13</KG>                 <!--包壳热导率（W/m/K）-->
+  <KCRUD>0.8648</KCRUD>       <!--杂质热导率（W/m/K）-->
+  <KOX>10</KOX>               <!--氧化层热导率（W/m/K)-->
+  <HGP>5678</HGP>             <!--气隙等效换热系数（W/m2/K）-->
+</FuelHeatingModels>
+</input>
