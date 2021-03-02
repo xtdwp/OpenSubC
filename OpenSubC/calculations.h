@@ -2,6 +2,7 @@
 #define OPENSUBC_SIMULATION_H
 
 #include <vector>
+#include "Eigen//Dense"
 
 namespace opensubc {
 
