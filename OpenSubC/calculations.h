@@ -31,10 +31,6 @@ namespace opensubc {
 	void initialize_calculation();
 	//void read_calculation_xml();
 	void finalize_calculation();
-	double h(double p, double t);   //由压强(MPa)、温度(K)算焓值(kJ/kg)
-	double t(double p, double h);  //由压强、焓值算温度
-	double rho(double p, double h); //由压强、焓值算密度（kg/m3）
-	double u(double rho, double t); //由密度、温度算粘度（uPa/s）
 } // namespace opensubc
 
 /*********数据结构体定义*********/
