@@ -51,7 +51,6 @@ void opensubc::finalize_calculation()
 {
 
 }
-
 double opensubc::h(double p, double t) {
     double a[5] = { -1.42101,8.72986,-19.462,11.08749,-0.97826 };
     double b[5] = { 9.67303,-48.26339,104.01501,-59.74097,5.57283 };
@@ -67,7 +66,6 @@ double opensubc::h(double p, double t) {
     z *= 990;
     return z;
 }
-
 double opensubc::t(double p, double h) {
     double a[5] = { -0.87811,4.19127,1.11324,-6.78545,3.22732 };
     double b[5] = { 3.58799,-15.32662,-14.17288,41.41008,-18.53626 };
@@ -82,7 +80,6 @@ double opensubc::t(double p, double h) {
     z *= 780;
     return z;
 }
-
 double opensubc::rho(double p, double h) {
     double a[6] = { 5.51141,-31.90696,116.86343,-84.53118,-26.86934,29.46078 };
     double b[6] = { -30.68877,177.99507,-597.69806,275.28642,388.4933,-254.14657 };
@@ -98,7 +95,6 @@ double opensubc::rho(double p, double h) {
     z *= 480;
     return z;
 }
-
 double opensubc::u(double rho, double t) {
     double a[4] = { -0.07622,1.34854,-0.54067,0.12929 };
     double b[4] = { 0.23975,-0.6812,0.81125,-0.32631 };
