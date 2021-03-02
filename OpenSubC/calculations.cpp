@@ -5,6 +5,21 @@
 #include "initialize.h"
 #include <vector>
 
+/**********全局数据存储**********/
+        //通道控制体数据
+opensubc::StateValue** opensubc::calculation::stateValue;
+double** opensubc::calculation::v;
+//间隙搅混数据
+opensubc::MixValue** opensubc::calculation::mixValue;
+//燃料棒发热面功率
+double** opensubc::calculation::q;
+
+/**********全局计算设置**********/
+double opensubc::calculation::length;//通道长度
+int opensubc::calculation::numOfBlocks;//轴向分段数
+double opensubc::calculation::pInitial, opensubc::calculation::TInitial, opensubc::calculation::vInitial;//二氧化碳入口初始条件
+double opensubc::calculation::tStep, opensubc::calculation::tEnd;//时间步长与计算总时长
+
 void opensubc::initialize_calculation()
 {
     TiXmlHandle hDoc(&inp);         // hDoc是&inp指向的对象

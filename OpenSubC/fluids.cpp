@@ -1,4 +1,5 @@
 #include "fluids.h"
+#include<cmath>
 
 double opensubc::Na::h(double p, double t) {
     double a[5] = { -1.42101,8.72986,-19.462,11.08749,-0.97826 };

@@ -13,6 +13,8 @@
 #include "constants.h"
 #include "output.h"
 
+TiXmlDocument opensubc::inp;
+
 int opensubc_init(int argc, char* argv[], const void* intracomm)
 {
     using namespace opensubc;

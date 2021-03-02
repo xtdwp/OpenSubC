@@ -17,6 +17,8 @@ namespace opensubc {
 	constexpr int RUN_MODE_CALCULATING{ 1 };
 	constexpr int RUN_MODE_PLOTTING{ 2 };
 
+	// Math Constants
+	constexpr double PI{ 3.141592653589793};
 
 } // namespace opensubc
 

@@ -10,7 +10,7 @@
 
 namespace opensubc {
 
-	TiXmlDocument inp;
+	extern TiXmlDocument inp;
 
 	int parse_command_line(int argc, char* argv[]);
 #ifdef OPENSUBC_MPI
