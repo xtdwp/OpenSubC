@@ -24,6 +24,16 @@ int main(int argc, char* argv[]) {
 		std::cout << "fail" << std::endl;
 	}
 	opensubc::initialize_geometry();
+	for (auto &rod:opensubc::geometry::rods)
+	{
+		std::cout << rod.id << " " << rod.x << " " << rod.y << " " << rod.r << std::endl;
+		for (auto& id : rod.channelIds)
+			std::cout << id << " ";
+		std::cout << std::endl;
+		for (auto& id : rod.gapIds)
+			std::cout << id << " ";
+		std::cout << std::endl;
+	}
 
 //    using namespace opensubc;
 //    int err;

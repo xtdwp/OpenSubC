@@ -85,8 +85,8 @@ void opensubc::channel::setChannel()//在初始化之后，根据燃料棒位置分布构造子通道
         {
             geometry::gaps.push_back(gap(rodIds[0], rodIds[i]));
             geometry::gaps[geometry::gaps.size() - 1].channelId[0] = id;
-            geometry::rods[rodIds[0]].channelIds.push_back(geometry::gaps.size() - 1);
-            geometry::rods[rodIds[i]].channelIds.push_back(geometry::gaps.size() - 1);
+            geometry::rods[rodIds[0]].gapIds.push_back(geometry::gaps.size() - 1);
+            geometry::rods[rodIds[i]].gapIds.push_back(geometry::gaps.size() - 1);
         }
         else
         {
@@ -98,8 +98,8 @@ void opensubc::channel::setChannel()//在初始化之后，根据燃料棒位置分布构造子通道
         {
             geometry::gaps.push_back(gap(rodIds[crossId], rodIds[i]));
             geometry::gaps[geometry::gaps.size() - 1].channelId[0] = id;
-            geometry::rods[rodIds[crossId]].channelIds.push_back(geometry::gaps.size() - 1);
-            geometry::rods[rodIds[i]].channelIds.push_back(geometry::gaps.size() - 1);
+            geometry::rods[rodIds[crossId]].gapIds.push_back(geometry::gaps.size() - 1);
+            geometry::rods[rodIds[i]].gapIds.push_back(geometry::gaps.size() - 1);
         }
         else
         {
@@ -128,10 +128,14 @@ void opensubc::initialize_geometry()
     TiXmlElement* RODElem = hRoot.FirstChild("GeometricParameter").FirstChild("ROD").Element(); //当前指向了第一个ROD节点
     unsigned idtemp;
     double xtemp, ytemp,rtemp;
+    int n = 0;
     for (RODElem; RODElem; RODElem = RODElem->NextSiblingElement()) //燃料棒部分
     {
+        std::cout << n << std::endl;
         TiXmlHandle ROD(RODElem); 
         TiXmlElement* XElem = ROD.FirstChild("X").Element();
+        if (XElem == NULL)
+            break;
         TiXmlElement* YElem = ROD.FirstChild("Y").Element();
         TiXmlElement* RRODElem = ROD.FirstChild("RROD").Element();
         RODElem->QueryUnsignedAttribute("id", &idtemp);
@@ -141,13 +145,20 @@ void opensubc::initialize_geometry()
         fuelRod rodtemp(idtemp, xtemp, ytemp, rtemp);
         std::cout << idtemp << "  " << xtemp << "  " << ytemp << "  " << rtemp << std::endl;
         geometry::rods.push_back(rodtemp);
+        std::cout << n++ << std::endl;
     }
+    std::cout << "here!" << std::endl;
     TiXmlElement* CHANLElem = hRoot.FirstChild("GeometricParameter").FirstChild("CHANL").Element();
+    std::cout << "here!" << std::endl;
     for (CHANLElem; CHANLElem; CHANLElem = CHANLElem->NextSiblingElement())   //通道部分
     {
         TiXmlHandle CHANL(CHANLElem);
         TiXmlElement* RODIDElem = CHANL.FirstChild("RODID").Element();
+        std::cout << "here!" << std::endl;
+        if (RODElem == NULL)
+            std::cout << "NULL!" << std::endl;
         RODIDElem->QueryUnsignedAttribute("id", &idtemp);
+        std::cout << "here!" << std::endl;
         unsigned count=0;
         std::vector <unsigned> RODID;//子通道连接的燃料棒的id的数组
         for (RODIDElem; RODIDElem; RODIDElem = RODIDElem->NextSiblingElement())
