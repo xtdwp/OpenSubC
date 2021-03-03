@@ -6,12 +6,15 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "capi.h"
 #include "error.h"
 #include "settings.h"
 #include "constants.h"
 #include "output.h"
+#include "geometry.h"
+#include "calculations.h"
 
 TiXmlDocument opensubc::inp;
 
@@ -51,8 +54,8 @@ int opensubc_init(int argc, char* argv[], const void* intracomm)
 
 
     // Read XML input files
-    read_input_xml();
-
+    /*read_input_xml();
+    initialize_geometry();*/
     // Stop initialization timer
     /*simulation::time_initialize.stop();*/
 
@@ -230,8 +233,19 @@ namespace opensubc {
         return 0;
     }
 
+    void initialize()
+    {
+        read_input_xml();
+        initialize_geometry();
+        initialize_calculation();
+    }
+
     void read_input_xml()
     {
+        if (!opensubc::inp.LoadFile("input.xml"))
+        {
+            std::cout << "fail to read input.xml" << std::endl;
+        }
         //read_settings_xml();
         //read_cross_sections_xml();
         //read_materials_xml();

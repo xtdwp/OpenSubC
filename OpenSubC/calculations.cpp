@@ -14,6 +14,11 @@ opensubc::MixValue** opensubc::calculation::mixValue;
 //燃料棒发热面功率
 double** opensubc::calculation::q;
 
+/**********全局数据存储(向量与矩阵)**********/
+Eigen::VectorXd P, h, T, rho, m, w, wk;
+Eigen::MatrixXd W[31];
+Eigen::SparseMatrix<double> SW[31];
+
 /**********全局计算设置**********/
 double opensubc::calculation::length;//通道长度
 int opensubc::calculation::numOfBlocks;//轴向分段数
@@ -21,6 +26,16 @@ double opensubc::calculation::pInitial, opensubc::calculation::TInitial, opensub
 double opensubc::calculation::tStep, opensubc::calculation::tEnd;//时间步长与计算总时长
 
 void opensubc::initialize_calculation()
+{
+    read_calculation_xml();
+    initVectors();//初始化各变量向量
+    initEnergyEquation();//初始化能量方程所需矩阵
+    initAxialMomentumEquation();//初始化轴向动量方程所需矩阵
+    initCrossMomentumEquation();//初始化横向动量方程所需矩阵
+    initMassEquation();//初始化质量守恒方程所需矩阵
+}
+
+void opensubc::read_calculation_xml()
 {
     TiXmlHandle hDoc(&inp);         // hDoc是&inp指向的对象
     TiXmlElement* p0Elem;            // 指向元素的指针
@@ -60,6 +75,31 @@ void opensubc::initialize_calculation()
         i++;
     }
     calculation::q = &q0[0];
+}
+
+void opensubc::initVectors()//初始化各变量向量
+{
+
+}
+
+void opensubc::initEnergyEquation()
+{
+
+}
+
+void opensubc::initAxialMomentumEquation()
+{
+
+}
+
+void opensubc::initCrossMomentumEquation()
+{
+
+}
+
+void opensubc::initMassEquation()
+{
+
 }
 
 void opensubc::finalize_calculation()

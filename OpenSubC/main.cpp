@@ -19,12 +19,8 @@
 
 
 int main(int argc, char* argv[]) {
-	if (!opensubc::inp.LoadFile("input.xml"))
-	{
-		std::cout << "fail" << std::endl;
-	}
-	opensubc::initialize_geometry();
-	for (auto &rod:opensubc::geometry::rods)
+	opensubc::initialize();
+	/*for (auto &rod:opensubc::geometry::rods)
 	{
 		std::cout << rod.id << " " << rod.x << " " << rod.y << " " << rod.r << std::endl;
 		for (auto& id : rod.channelIds)
@@ -52,7 +48,7 @@ int main(int argc, char* argv[]) {
 		for (auto& id : channel.circleLength)
 			std::cout << id << " ";
 		std::cout << std::endl;
-	}
+	}*/
 
 //    using namespace opensubc;
 //    int err;

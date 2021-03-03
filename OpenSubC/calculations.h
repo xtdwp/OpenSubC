@@ -2,7 +2,8 @@
 #define OPENSUBC_SIMULATION_H
 
 #include <vector>
-#include "Eigen//Dense"
+#include "Eigen/Dense"
+#include "Eigen/Eigen"
 
 namespace opensubc {
 
@@ -35,6 +36,11 @@ namespace opensubc {
 		//燃料棒发热面功率
 		extern double** q;
 
+		/**********全局数据存储(向量与矩阵)**********/
+		extern Eigen::VectorXd P, h, T, rho, m, w, wk;
+		extern Eigen::MatrixXd W[31];
+		extern Eigen::SparseMatrix<double> SW[31];
+
 		/**********全局计算设置**********/
 		extern double length;//通道长度
 		extern int numOfBlocks;//轴向分段数
@@ -45,8 +51,14 @@ namespace opensubc {
 	/**********************功能函数**********************/
 
 	void initialize_calculation();
-	//void read_calculation_xml();
+	void read_calculation_xml();
 	void finalize_calculation();
+
+	void initVectors();//初始化各变量向量
+	void initEnergyEquation();//初始化能量方程所需矩阵
+	void initAxialMomentumEquation();//初始化轴向动量方程所需矩阵
+	void initCrossMomentumEquation();//初始化横向动量方程所需矩阵
+	void initMassEquation();//初始化质量守恒方程所需矩阵
 } // namespace opensubc
 
 #endif // OPENSUBC_SIMULATION_H
