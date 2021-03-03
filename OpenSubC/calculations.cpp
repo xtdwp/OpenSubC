@@ -4,6 +4,7 @@
 #include "capi.h"
 #include "initialize.h"
 #include <vector>
+#include <iostream>
 
 /**********全局数据存储**********/
         //通道控制体数据
@@ -62,10 +63,16 @@ void opensubc::read_calculation_xml()
     double Q;
     std::vector<double*>q0;        //存放一级指针的vector数组
     int i=0;
+    std::cout << "before loop" << std::endl;
     for (RODElem; RODElem; RODElem = RODElem->NextSiblingElement())//遍历所有的燃料棒（要求输入卡按id顺序填写）
     {
         TiXmlHandle ROD(RODElem);
         TiXmlElement* QElem = ROD.FirstChild("Q").Element();
+        if (QElem == NULL)
+        {
+            std::cout << "input end" << std::endl;
+            break;
+        }
         Q= atof(QElem->GetText());
         for (int j = 0; j < calculation::numOfBlocks; j++)//输入不同轴向分段数的热功率
         {
