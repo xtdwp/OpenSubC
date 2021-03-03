@@ -32,6 +32,7 @@ opensubc::gap::gap(unsigned rodId0, unsigned rodId1)
     id = num++;
 	rodId[0] = rodId0;
 	rodId[1] = rodId1;
+    channelId[0] = channelId[1] = -1;
 }
 
 int opensubc::gap::checkGapExistence(unsigned rodId0, unsigned rodId1)
@@ -58,7 +59,10 @@ void opensubc::channel::setChannel()//在初始化之后，根据燃料棒位置分布构造子通道
 {
     //每个燃料棒都增加该通道id信息
     for (int i = 0; i < 4; ++i)
+    {
         geometry::rods[rodIds[i]].channelIds.push_back(id);
+        circleLength[i] = geometry::rods[rodIds[i]].r * PI * 0.5;
+    }
 
     double r = geometry::rods[rodIds[0]].r;
     unsigned crossId;//跟第一个燃料棒对角线的燃料棒在数组中的位置
@@ -72,9 +76,8 @@ void opensubc::channel::setChannel()//在初始化之后，根据燃料棒位置分布构造子通道
             A = dx * dy;
             crossId = i;
         }
-        circleLength[i] = geometry::rods[rodIds[i]].r * PI * 0.5;
     }
-
+    A -= PI * r * r;
     //构建gap
     for (int i = 1; i < 4; ++i)
     {

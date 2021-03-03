@@ -34,6 +34,25 @@ int main(int argc, char* argv[]) {
 			std::cout << id << " ";
 		std::cout << std::endl;
 	}
+	for (auto& gap : opensubc::geometry::gaps)
+	{
+		std::cout << gap.id << std::endl;
+		std::cout << gap.rodId[0] << " " << gap.rodId[1] << std::endl;
+		std::cout << gap.channelId[0] << " " << gap.channelId[1] << std::endl;
+	}
+	for (auto& channel : opensubc::geometry::channels)
+	{
+		std::cout << channel.id << " " << channel.A << std::endl;
+		for (auto& id : channel.rodIds)
+			std::cout << id << " ";
+		std::cout << std::endl;
+		for (auto& id : channel.gapIds)
+			std::cout << id << " ";
+		std::cout << std::endl;
+		for (auto& id : channel.circleLength)
+			std::cout << id << " ";
+		std::cout << std::endl;
+	}
 
 //    using namespace opensubc;
 //    int err;

@@ -26,7 +26,7 @@ namespace opensubc {
 	public:
 		unsigned id;
 		unsigned rodId[2];
-		unsigned channelId[2];
+		int channelId[2];
 
 		gap() = default;
 		gap(unsigned rodId0, unsigned rodId1);
@@ -42,7 +42,7 @@ namespace opensubc {
 		unsigned id;
 		std::vector<unsigned> gapIds;
 		std::vector<unsigned> rodIds;
-		std::vector<unsigned> circleLength;//各燃料棒在通道内的浸润周长
+		std::vector<double> circleLength;//各燃料棒在通道内的浸润周长
 		double A;//流体通道横截面积
 
 		channel() = default;
