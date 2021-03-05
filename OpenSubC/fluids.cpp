@@ -1,7 +1,7 @@
 #include "fluids.h"
 #include<cmath>
 
-double opensubc::Na::h(double p, double t) {
+double opensubc::CO2::h(double p, double t) {
     double a[5] = { -1.42101,8.72986,-19.462,11.08749,-0.97826 };
     double b[5] = { 9.67303,-48.26339,104.01501,-59.74097,5.57283 };
     double c[5] = { -18.02611,97.33641,-206.0090,119.21196,-11.64132 };
@@ -17,7 +17,7 @@ double opensubc::Na::h(double p, double t) {
     return z;
 }
 
-double opensubc::Na::t(double p, double h) {
+double opensubc::CO2::t(double p, double h) {
     double a[5] = { -0.87811,4.19127,1.11324,-6.78545,3.22732 };
     double b[5] = { 3.58799,-15.32662,-14.17288,41.41008,-18.53626 };
     double c[5] = { -2.79791,19.82254,41.9763,-91.03666,38.97091 };
@@ -32,7 +32,7 @@ double opensubc::Na::t(double p, double h) {
     return z;
 }
 
-double opensubc::Na::rho(double p, double h) {
+double opensubc::CO2::rho(double p, double h) {
     double a[6] = { 5.51141,-31.90696,116.86343,-84.53118,-26.86934,29.46078 };
     double b[6] = { -30.68877,177.99507,-597.69806,275.28642,388.4933,-254.14657 };
     double c[6] = { 66.27682,-367.93354,1138.11163,-24.97488,-1538.7021,812.59139 };
@@ -48,7 +48,7 @@ double opensubc::Na::rho(double p, double h) {
     return z;
 }
 
-double opensubc::Na::u(double rho, double t) {
+double opensubc::CO2::u(double rho, double t) {
     double a[4] = { -0.07622,1.34854,-0.54067,0.12929 };
     double b[4] = { 0.23975,-0.6812,0.81125,-0.32631 };
     double c[4] = { 0.04682,1.31995,-1.62115,0.69507 };

@@ -16,9 +16,9 @@ opensubc::MixValue** opensubc::calculation::mixValue;
 double** opensubc::calculation::q;
 
 /**********全局数据存储(向量与矩阵)**********/
-Eigen::VectorXd P, h, T, rho, m, w, wk;
-Eigen::MatrixXd W[31];
-Eigen::SparseMatrix<double> SW[31];
+Eigen::SparseMatrix<double> P, h, T, rho, m, w, wk;
+Eigen::SparseMatrix<double> energyD[3];
+std::vector<Eigen::SparseMatrix<double>> energyC;
 
 /**********全局计算设置**********/
 double opensubc::calculation::length;//通道长度
@@ -93,6 +93,17 @@ void opensubc::initEnergyEquation()
 {
 
 }
+
+void opensubc::initDirectionMatrix()//初始化方向转换矩阵
+{
+
+}
+
+void opensubc::initConnectMatrix()//初始化连接矩阵
+{
+
+}
+
 
 void opensubc::initAxialMomentumEquation()
 {

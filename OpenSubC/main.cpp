@@ -16,11 +16,36 @@
 #include "calculations.h"
 #include "initialize.h"
 #include <iostream>
+#include <Eigen/Eigen>
 
 
 int main(int argc, char* argv[]) {
+	//Eigen::MatrixXd dense(3, 3);
+	//dense << 1, 0, 0,
+	//	0, 1, 0,
+	//	0, 0, 1;
+	//Eigen::Vector3d v = { 1,2,3 };
+	//Eigen::SparseMatrix<double, Eigen::ColMajor> sv(3, 2);
+	//sv.insert(0, 0) = 1;
+	//sv.insert(2, 0) = 3;
+	//Eigen::SparseMatrix<double, Eigen::ColMajor> _sv(3, 2);
+	//_sv.insert(1, 0) = 2;
+	//Eigen::SparseMatrix<double, Eigen::ColMajor> x(3, 3);
+	//std::vector<Eigen::Triplet<double>> values;
+	//values.emplace_back(0, 0, 1);
+	//values.emplace_back(2, 2, 2);
+	//values.emplace_back(1, 1, 1);
+	//x.setFromTriplets(values.begin(), values.end());
+	////x = dense;
+	//std::cout << "sv = \n" << sv << std::endl;
+	//std::cout << "_sv = \n" << _sv << std::endl;
+	//sv = sv + _sv;
+	//std::cout << "sv = \n" << sv << std::endl;
+	//std::cout << "x = \n" << x << std::endl;
+	//sv.col(1) = x * sv.col(0);
+	//std::cout << "sv = \n" << sv << std::endl;
 	opensubc::initialize();
-	/*for (auto &rod:opensubc::geometry::rods)
+	for (auto &rod:opensubc::geometry::rods)
 	{
 		std::cout << rod.id << " " << rod.x << " " << rod.y << " " << rod.r << std::endl;
 		for (auto& id : rod.channelIds)
@@ -48,7 +73,7 @@ int main(int argc, char* argv[]) {
 		for (auto& id : channel.circleLength)
 			std::cout << id << " ";
 		std::cout << std::endl;
-	}*/
+	}
 
 //    using namespace opensubc;
 //    int err;

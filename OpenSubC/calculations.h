@@ -37,9 +37,9 @@ namespace opensubc {
 		extern double** q;
 
 		/**********全局数据存储(向量与矩阵)**********/
-		extern Eigen::VectorXd P, h, T, rho, m, w, wk;
-		extern Eigen::MatrixXd W[31];
-		extern Eigen::SparseMatrix<double> SW[31];
+		extern Eigen::SparseMatrix<double> P, h, T, rho, m, w, wTurbulence;
+		extern Eigen::SparseMatrix<double> energyD[3];
+		extern std::vector<Eigen::SparseMatrix<double>> energyC;
 
 		/**********全局计算设置**********/
 		extern double length;//通道长度
@@ -55,7 +55,11 @@ namespace opensubc {
 	void finalize_calculation();
 
 	void initVectors();//初始化各变量向量
+
 	void initEnergyEquation();//初始化能量方程所需矩阵
+	void initDirectionMatrix();//初始化方向转换矩阵
+	void initConnectMatrix();//初始化连接矩阵
+
 	void initAxialMomentumEquation();//初始化轴向动量方程所需矩阵
 	void initCrossMomentumEquation();//初始化横向动量方程所需矩阵
 	void initMassEquation();//初始化质量守恒方程所需矩阵
