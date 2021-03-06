@@ -96,6 +96,24 @@ void opensubc::initEnergyEquation()
 
 void opensubc::initDirectionMatrix()//初始化方向转换矩阵
 {
+    int n = m.rows();
+    typedef Eigen::Triplet<double> T;
+    std::vector<T> tripletList0;           //创建三元组
+    int v_ij ;
+    for (int i = 0; i < n; i++) { //遍历行，赋值
+        if (m.coeffRef(i, 0) > 0)
+        {
+            v_ij = 1;
+        }
+        else
+        {
+            v_ij = 0;
+        }
+        tripletList0.push_back(T(i, i, v_ij));
+    };
+    energyD[0].resize(n, n);         
+    energyD[0].setFromTriplets(tripletList0.begin(), tripletList0.end());     //从三元组填充到矩阵
+
 
 }
 
