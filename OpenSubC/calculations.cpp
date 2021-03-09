@@ -3,6 +3,7 @@
 #include "tinyxml.h"
 #include "capi.h"
 #include "initialize.h"
+#include "geometry.h"
 #include <vector>
 #include <iostream>
 
@@ -17,12 +18,13 @@ double** opensubc::calculation::q;
 
 /**********全局数据存储(向量与矩阵)**********/
 Eigen::SparseMatrix<double> P, h, T, rho, m, w, wk;
-Eigen::SparseMatrix<double> energyD[3];
-std::vector<Eigen::SparseMatrix<double>> energyC;
+Eigen::SparseMatrix<double> energyD, energyC;
+std::vector<Eigen::SparseMatrix<double>> energyE;
 
 /**********全局计算设置**********/
 double opensubc::calculation::length;//通道长度
 int opensubc::calculation::numOfBlocks;//轴向分段数
+int opensubc::calculation::numOfChannelData, opensubc::calculation::numOfGapData;//通道数据向量总长度与gap数据向量总长度
 double opensubc::calculation::pInitial, opensubc::calculation::TInitial, opensubc::calculation::vInitial;//二氧化碳入口初始条件
 double opensubc::calculation::tStep, opensubc::calculation::tEnd;//时间步长与计算总时长
 
@@ -111,15 +113,40 @@ void opensubc::initDirectionMatrix()//初始化方向转换矩阵
         }
         tripletList0.push_back(T(i, i, v_ij));
     };
-    energyD[0].resize(n, n);         
-    energyD[0].setFromTriplets(tripletList0.begin(), tripletList0.end());     //从三元组填充到矩阵
-
-
+    energyD.resize(n, n);         
+    energyD.setFromTriplets(tripletList0.begin(), tripletList0.end());     //从三元组填充到矩阵
 }
 
 void opensubc::initConnectMatrix()//初始化连接矩阵
 {
+    energyC.resize(calculation::numOfChannelData, calculation::numOfChannelData);
+    for (auto& channel : geometry::channels)
+    {
+        int connectedChannelId;
+        for (unsigned gapid : channel.gapIds)
+        {
+            connectedChannelId = geometry::gaps[gapid].getOtherChannelId(channel.id);
+            for (size_t i = 0; i <= calculation::numOfBlocks; ++i)
+               energyC.insert(channel.id * (calculation::numOfBlocks + (long long)1) + i, connectedChannelId * (calculation::numOfBlocks + (long long)1) + i) = 1;
+        }
+    }
+}
 
+void opensubc::initCrossDirectionMatrix()//初始化横向流量方向矢量（e）矩阵
+{
+    energyE.resize(calculation::numOfChannelData);
+    for (auto& matrix : energyE)
+        matrix.resize(calculation::numOfGapData, calculation::numOfChannelData);
+    for (auto& channel : geometry::channels)
+    {
+        int connectedChannelId;
+        for (unsigned gapid : channel.gapIds)
+        {
+            connectedChannelId = geometry::gaps[gapid].getOtherChannelId(channel.id);
+            for (size_t i = 0; i <= calculation::numOfBlocks; ++i)
+                energyE[channel.id * (calculation::numOfBlocks + (long long)1) + i].insert(connectedChannelId * (calculation::numOfBlocks + (long long)1) + i, gapid * (calculation::numOfBlocks + (long long)1) + i) = channel.id > connectedChannelId ? 1 : -1;
+        }
+    }
 }
 
 

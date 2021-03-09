@@ -38,12 +38,13 @@ namespace opensubc {
 
 		/**********全局数据存储(向量与矩阵)**********/
 		extern Eigen::SparseMatrix<double> P, h, T, rho, m, w, wTurbulence;
-		extern Eigen::SparseMatrix<double> energyD[3];
-		extern std::vector<Eigen::SparseMatrix<double>> energyC;
+		extern Eigen::SparseMatrix<double> energyD,energyC;
+		extern std::vector<Eigen::SparseMatrix<double>> energyE;
 
 		/**********全局计算设置**********/
 		extern double length;//通道长度
 		extern int numOfBlocks;//轴向分段数
+		extern int numOfChannelData, numOfGapData;//通道数据向量总长度与gap数据向量总长度
 		extern double pInitial, TInitial, vInitial;//二氧化碳入口初始条件
 		extern double tStep, tEnd;//时间步长与计算总时长
 	}
@@ -59,6 +60,7 @@ namespace opensubc {
 	void initEnergyEquation();//初始化能量方程所需矩阵
 	void initDirectionMatrix();//初始化方向转换矩阵
 	void initConnectMatrix();//初始化连接矩阵
+	void initCrossDirectionMatrix();//初始化横向流量方向矢量（e）矩阵
 
 	void initAxialMomentumEquation();//初始化轴向动量方程所需矩阵
 	void initCrossMomentumEquation();//初始化横向动量方程所需矩阵

@@ -35,6 +35,11 @@ opensubc::gap::gap(unsigned rodId0, unsigned rodId1)
     channelId[0] = channelId[1] = -1;
 }
 
+int opensubc::gap::getOtherChannelId(unsigned _channelId)//获取gap除了输入的通道id之外连接的另一个通道的id
+{
+    return _channelId == channelId[0] ? channelId[1] : channelId[0];
+}
+
 int opensubc::gap::checkGapExistence(unsigned rodId0, unsigned rodId1)
 {
     for (int i = 0; i < geometry::gaps.size(); ++i)
