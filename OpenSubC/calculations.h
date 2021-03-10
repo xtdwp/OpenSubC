@@ -35,11 +35,16 @@ namespace opensubc {
 		extern MixValue** mixValue;
 		//燃料棒发热面功率
 		extern double** q;
+		//通道间导热因子
+		extern double GT;
 
 		/**********全局数据存储(向量与矩阵)**********/
-		extern Eigen::SparseMatrix<double> P, h, T, rho, m, w, wTurbulence;
-		extern Eigen::SparseMatrix<double> energyD,energyC;
-		extern std::vector<Eigen::SparseMatrix<double>> energyE;
+		extern Eigen::SparseMatrix<double> P, h, T, rho, m, w, wTurbulence, k;
+		extern Eigen::SparseMatrix<double> AXt; //（AXt，即AiXj / dt）
+		extern Eigen::SparseMatrix<double> L, H;//降列序号矩阵与升列序号矩阵
+		extern Eigen::SparseMatrix<double> energyD,energyC;//轴向流量方向矩阵与通道连接矩阵
+		extern std::vector<Eigen::SparseMatrix<double>> energyE[2];//通道与gap计算横向流量的连接矩阵（包括方向）
+		extern std::vector<Eigen::SparseMatrix<double>> energyCs;//计算子通道间导热时的连接矩阵
 
 		/**********全局计算设置**********/
 		extern double length;//通道长度
@@ -58,9 +63,12 @@ namespace opensubc {
 	void initVectors();//初始化各变量向量
 
 	void initEnergyEquation();//初始化能量方程所需矩阵
+	void initGeometryMatrix();//初始化几何矩阵（AXt，即AiXj/dt）
 	void initDirectionMatrix();//初始化方向转换矩阵
 	void initConnectMatrix();//初始化连接矩阵
 	void initCrossDirectionMatrix();//初始化横向流量方向矢量（e）矩阵
+	void initHeatConductMatrix();//初始化子通道间热传导矩阵
+	void initLowerHigherColumnMatrix();//初始化降列序号矩阵与升列序号矩阵
 
 	void initAxialMomentumEquation();//初始化轴向动量方程所需矩阵
 	void initCrossMomentumEquation();//初始化横向动量方程所需矩阵

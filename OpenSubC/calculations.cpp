@@ -15,11 +15,16 @@ double** opensubc::calculation::v;
 opensubc::MixValue** opensubc::calculation::mixValue;
 //燃料棒发热面功率
 double** opensubc::calculation::q;
+//通道间导热因子
+double opensubc::calculation::GT;
 
 /**********全局数据存储(向量与矩阵)**********/
-Eigen::SparseMatrix<double> P, h, T, rho, m, w, wk;
-Eigen::SparseMatrix<double> energyD, energyC;
-std::vector<Eigen::SparseMatrix<double>> energyE;
+Eigen::SparseMatrix<double> opensubc::calculation::P, opensubc::calculation::h, opensubc::calculation::T, opensubc::calculation::rho, opensubc::calculation::m, opensubc::calculation::w, opensubc::calculation::wTurbulence;
+Eigen::SparseMatrix<double> opensubc::calculation::AXt; //（AXt，即AiXj / dt）
+Eigen::SparseMatrix<double> opensubc::calculation::L;   //降编号矩阵
+Eigen::SparseMatrix<double> opensubc::calculation::energyD, opensubc::calculation::energyC;
+std::vector<Eigen::SparseMatrix<double>> opensubc::calculation::energyE[2];
+std::vector<Eigen::SparseMatrix<double>> opensubc::calculation::energyCs;
 
 /**********全局计算设置**********/
 double opensubc::calculation::length;//通道长度
@@ -113,29 +118,43 @@ void opensubc::initDirectionMatrix()//初始化方向转换矩阵
         }
         tripletList0.push_back(T(i, i, v_ij));
     };
-    energyD.resize(n, n);         
-    energyD.setFromTriplets(tripletList0.begin(), tripletList0.end());     //从三元组填充到矩阵
+    calculation::energyD.resize(n, n);
+    calculation::energyD.setFromTriplets(tripletList0.begin(), tripletList0.end());     //从三元组填充到矩阵
+}
+
+void opensubc::initGeometryMatrix()//初始化几何矩阵（AXt，即AiXj/dt）
+{
+    calculation::AXt.resize(calculation::numOfChannelData, calculation::numOfChannelData);
+    for (auto& channel : geometry::channels)
+    {
+        for (size_t i = 1; i <= calculation::numOfBlocks; ++i)
+            calculation::AXt.insert(channel.id * (calculation::numOfBlocks + (long long)1) + i, channel.id * (calculation::numOfBlocks + (long long)1) + i) = channel.A * calculation::length / calculation::numOfBlocks / calculation::tStep;
+    }
 }
 
 void opensubc::initConnectMatrix()//初始化连接矩阵
 {
-    energyC.resize(calculation::numOfChannelData, calculation::numOfChannelData);
+    calculation::energyC.resize(calculation::numOfChannelData, calculation::numOfChannelData);
     for (auto& channel : geometry::channels)
     {
         int connectedChannelId;
         for (unsigned gapid : channel.gapIds)
         {
             connectedChannelId = geometry::gaps[gapid].getOtherChannelId(channel.id);
+            if (connectedChannelId == -1) continue;
             for (size_t i = 0; i <= calculation::numOfBlocks; ++i)
-               energyC.insert(channel.id * (calculation::numOfBlocks + (long long)1) + i, connectedChannelId * (calculation::numOfBlocks + (long long)1) + i) = 1;
+                calculation::energyC.insert(channel.id * (calculation::numOfBlocks + (long long)1) + i, connectedChannelId * (calculation::numOfBlocks + (long long)1) + i) = 1;
         }
     }
 }
 
 void opensubc::initCrossDirectionMatrix()//初始化横向流量方向矢量（e）矩阵
 {
-    energyE.resize(calculation::numOfChannelData);
-    for (auto& matrix : energyE)
+    calculation::energyE[0].resize(calculation::numOfChannelData);
+    calculation::energyE[1].resize(calculation::numOfChannelData);
+    for (auto& matrix : calculation::energyE[0])
+        matrix.resize(calculation::numOfGapData, calculation::numOfChannelData);
+    for (auto& matrix : calculation::energyE[1])
         matrix.resize(calculation::numOfGapData, calculation::numOfChannelData);
     for (auto& channel : geometry::channels)
     {
@@ -143,9 +162,52 @@ void opensubc::initCrossDirectionMatrix()//初始化横向流量方向矢量（e）矩阵
         for (unsigned gapid : channel.gapIds)
         {
             connectedChannelId = geometry::gaps[gapid].getOtherChannelId(channel.id);
+            if (connectedChannelId == -1) continue;
             for (size_t i = 0; i <= calculation::numOfBlocks; ++i)
-                energyE[channel.id * (calculation::numOfBlocks + (long long)1) + i].insert(connectedChannelId * (calculation::numOfBlocks + (long long)1) + i, gapid * (calculation::numOfBlocks + (long long)1) + i) = channel.id > connectedChannelId ? 1 : -1;
+            {
+                calculation::energyE[0][channel.id * (calculation::numOfBlocks + (long long)1) + i].insert(connectedChannelId * (calculation::numOfBlocks + (long long)1) + i, gapid * (calculation::numOfBlocks + (long long)1) + i) = channel.id > connectedChannelId ? 1 : -1;
+                calculation::energyE[1][channel.id * (calculation::numOfBlocks + (long long)1) + i].insert(connectedChannelId * (calculation::numOfBlocks + (long long)1) + i, gapid * (calculation::numOfBlocks + (long long)1) + i) = -1;
+                calculation::energyE[1][channel.id * (calculation::numOfBlocks + (long long)1) + i].insert(channel.id * (calculation::numOfBlocks + (long long)1) + i, gapid * (calculation::numOfBlocks + (long long)1) + i) = 1;
+            }
         }
+    }
+}
+
+void opensubc::initHeatConductMatrix()//初始化子通道间热传导矩阵
+{
+    calculation::energyCs.resize(calculation::numOfChannelData);
+    for (auto& matrix : calculation::energyCs)
+        matrix.resize(calculation::numOfChannelData, calculation::numOfChannelData);
+    for (auto& channel : geometry::channels)
+    {
+        int connectedChannelId;
+        double mainElement = 0;
+        for (unsigned gapid : channel.gapIds)
+        {
+            opensubc::gap& gap = geometry::gaps[gapid];
+            connectedChannelId = gap.getOtherChannelId(channel.id);
+            if (connectedChannelId == -1) continue;
+            mainElement += gap.sk / gap.lk * calculation::GT;
+            for (size_t i = 0; i <= calculation::numOfBlocks; ++i)
+            {
+                calculation::energyCs[channel.id * (calculation::numOfBlocks + (long long)1) + i].insert(connectedChannelId * (calculation::numOfBlocks + (long long)1) + i, channel.id * (calculation::numOfBlocks + (long long)1) + i) = -0.5 * gap.sk / gap.lk * calculation::GT;
+                calculation::energyCs[channel.id * (calculation::numOfBlocks + (long long)1) + i].insert(connectedChannelId * (calculation::numOfBlocks + (long long)1) + i, connectedChannelId * (calculation::numOfBlocks + (long long)1) + i) = -0.5 * gap.sk / gap.lk * calculation::GT;
+                calculation::energyCs[channel.id * (calculation::numOfBlocks + (long long)1) + i].insert(channel.id * (calculation::numOfBlocks + (long long)1) + i, connectedChannelId * (calculation::numOfBlocks + (long long)1) + i) = 0.5 * gap.sk / gap.lk * calculation::GT;
+            }
+        }
+        calculation::energyCs[channel.id * (calculation::numOfBlocks + (long long)1) + i].insert(channel.id * (calculation::numOfBlocks + (long long)1) + i, channel.id * (calculation::numOfBlocks + (long long)1) + i) = mainElement * 0.5;
+    }
+}
+
+void opensubc::initLowerHigherColumnMatrix()//初始化降列序号矩阵
+{
+    calculation::L.resize(calculation::numOfChannelData, calculation::numOfChannelData);
+    calculation::H.resize(calculation::numOfChannelData, calculation::numOfChannelData);
+    for (int i = 0; i < calculation::numOfChannelData; ++i)
+    {
+        calculation::H.insert(static_cast<Eigen::Index>(i) + 1, i) = 1;
+        if (i % (calculation::numOfBlocks + 1) != 0)
+            calculation::L.insert(static_cast<Eigen::Index>(i) - 1, i) = 1;
     }
 }
 

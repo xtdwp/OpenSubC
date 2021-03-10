@@ -27,6 +27,7 @@ namespace opensubc {
 		unsigned id;
 		unsigned rodId[2];
 		int channelId[2];
+		double lk, sk;
 
 		gap() = default;
 		gap(unsigned rodId0, unsigned rodId1);
