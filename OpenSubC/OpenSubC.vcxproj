@@ -18,6 +18,37 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\calculations\calculations.h" />
+    <ClInclude Include="include\capi.h" />
+    <ClInclude Include="include\constants.h" />
+    <ClInclude Include="include\error.h" />
+    <ClInclude Include="include\finalize.h" />
+    <ClInclude Include="include\fluids\fluids.h" />
+    <ClInclude Include="include\geometry\geometry.h" />
+    <ClInclude Include="include\initialize.h" />
+    <ClInclude Include="include\InputData.h" />
+    <ClInclude Include="include\output.h" />
+    <ClInclude Include="include\settings.h" />
+    <ClInclude Include="include\tinyxml\tinystr.h" />
+    <ClInclude Include="include\tinyxml\tinyxml.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\calculations\calculations.cpp" />
+    <ClCompile Include="src\error.cpp" />
+    <ClCompile Include="src\finalize.cpp" />
+    <ClCompile Include="src\fluids\fluids.cpp" />
+    <ClCompile Include="src\geometry\geometry.cpp" />
+    <ClCompile Include="src\initialize.cpp" />
+    <ClCompile Include="src\InputData.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\output.cpp" />
+    <ClCompile Include="src\settings.cpp" />
+    <ClCompile Include="src\tinyxml\tinystr.cpp" />
+    <ClCompile Include="src\tinyxml\tinyxml.cpp" />
+    <ClCompile Include="src\tinyxml\tinyxmlerror.cpp" />
+    <ClCompile Include="src\tinyxml\tinyxmlparser.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -82,6 +113,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)include;$(ProjectDir)include\calculations;$(ProjectDir)include\geometry;$(ProjectDir)include\tinyxml;$(ProjectDir)include\fluids;$(IncludePath)</IncludePath>
+    <SourcePath>$(ProjectDir)src;$(ProjectDir)src\calculations;$(ProjectDir)src\geometry;$(ProjectDir)src\tinyxml;$(ProjectDir)src\fluids;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -143,37 +176,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="calculations.cpp" />
-    <ClCompile Include="error.cpp" />
-    <ClCompile Include="finalize.cpp" />
-    <ClCompile Include="fluids.cpp" />
-    <ClCompile Include="geometry.cpp" />
-    <ClCompile Include="initialize.cpp" />
-    <ClCompile Include="InputData.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="output.cpp" />
-    <ClCompile Include="settings.cpp" />
-    <ClCompile Include="tinystr.cpp" />
-    <ClCompile Include="tinyxml.cpp" />
-    <ClCompile Include="tinyxmlerror.cpp" />
-    <ClCompile Include="tinyxmlparser.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="calculations.h" />
-    <ClInclude Include="capi.h" />
-    <ClInclude Include="constants.h" />
-    <ClInclude Include="error.h" />
-    <ClInclude Include="finalize.h" />
-    <ClInclude Include="fluids.h" />
-    <ClInclude Include="geometry.h" />
-    <ClInclude Include="initialize.h" />
-    <ClInclude Include="InputData.h" />
-    <ClInclude Include="output.h" />
-    <ClInclude Include="settings.h" />
-    <ClInclude Include="tinystr.h" />
-    <ClInclude Include="tinyxml.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

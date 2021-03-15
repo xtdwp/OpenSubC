@@ -13,90 +13,114 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\calculations">
+      <UniqueIdentifier>{305ad19a-a1d0-43ef-aab9-b83dd4a58e94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\geometry">
+      <UniqueIdentifier>{e431934c-b91d-4fe2-a540-af000c664148}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\fluids">
+      <UniqueIdentifier>{9c00a1b5-82c3-41f6-85ba-ff72d7e4f2b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\tinyxml">
+      <UniqueIdentifier>{1f87edd2-0de1-4df5-b311-bd470b5dede5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\calculations">
+      <UniqueIdentifier>{31245be5-2b0a-4ea6-a2ad-5939e78c486e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\geometry">
+      <UniqueIdentifier>{fc9328af-2cc7-4751-94b9-1224ce02a7f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\tinyxml">
+      <UniqueIdentifier>{c4bfa620-709e-4faa-99fe-233f6765e8ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\fluids">
+      <UniqueIdentifier>{a83fa40a-19c8-4bae-ba1c-2666764dc917}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="initialize.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="settings.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="output.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="geometry.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="fluids.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="error.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="finalize.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="calculations.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="tinystr.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="tinyxml.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="tinyxmlerror.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="tinyxmlparser.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="InputData.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
+    <ClInclude Include="include\capi.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\constants.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\error.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\finalize.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\initialize.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InputData.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\output.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\settings.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\calculations\calculations.h">
+      <Filter>头文件\calculations</Filter>
+    </ClInclude>
+    <ClInclude Include="include\geometry\geometry.h">
+      <Filter>头文件\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluids\fluids.h">
+      <Filter>头文件\fluids</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tinyxml\tinystr.h">
+      <Filter>头文件\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tinyxml\tinyxml.h">
+      <Filter>头文件\tinyxml</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="initialize.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="settings.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="output.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="geometry.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="fluids.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="error.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="constants.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="capi.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="finalize.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="calculations.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="tinystr.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="tinyxml.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="InputData.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
+    <ClCompile Include="src\error.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\finalize.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\initialize.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InputData.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\output.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\settings.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\calculations\calculations.cpp">
+      <Filter>源文件\calculations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\geometry.cpp">
+      <Filter>源文件\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tinyxml\tinystr.cpp">
+      <Filter>源文件\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tinyxml\tinyxml.cpp">
+      <Filter>源文件\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tinyxml\tinyxmlerror.cpp">
+      <Filter>源文件\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tinyxml\tinyxmlparser.cpp">
+      <Filter>源文件\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluids\fluids.cpp">
+      <Filter>源文件\fluids</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
