@@ -21,7 +21,7 @@ double opensubc::calculation::GT;
 /**********全局数据存储(向量与矩阵)**********/
 Eigen::SparseMatrix<double> opensubc::calculation::P, opensubc::calculation::h, opensubc::calculation::T, opensubc::calculation::rho, opensubc::calculation::m, opensubc::calculation::w, opensubc::calculation::wTurbulence;
 Eigen::SparseMatrix<double> opensubc::calculation::AXt; //（AXt，即AiXj / dt）
-Eigen::SparseMatrix<double> opensubc::calculation::L;   //降编号矩阵
+Eigen::SparseMatrix<double> opensubc::calculation::L, opensubc::calculation::H;   //降编号矩阵
 Eigen::SparseMatrix<double> opensubc::calculation::energyD, opensubc::calculation::energyC;
 std::vector<Eigen::SparseMatrix<double>> opensubc::calculation::energyE[2];
 std::vector<Eigen::SparseMatrix<double>> opensubc::calculation::energyCs;
@@ -103,12 +103,12 @@ void opensubc::initEnergyEquation()
 
 void opensubc::initDirectionMatrix()//初始化方向转换矩阵
 {
-    int n = m.rows();
+    int n = calculation::numOfChannelData;
     typedef Eigen::Triplet<double> T;
     std::vector<T> tripletList0;           //创建三元组
     int v_ij ;
     for (int i = 0; i < n; i++) { //遍历行，赋值
-        if (m.coeffRef(i, 0) > 0)
+        if (calculation::m.coeffRef(i, 0) > 0)
         {
             v_ij = 1;
         }
@@ -195,7 +195,8 @@ void opensubc::initHeatConductMatrix()//初始化子通道间热传导矩阵
                 calculation::energyCs[channel.id * (calculation::numOfBlocks + (long long)1) + i].insert(channel.id * (calculation::numOfBlocks + (long long)1) + i, connectedChannelId * (calculation::numOfBlocks + (long long)1) + i) = 0.5 * gap.sk / gap.lk * calculation::GT;
             }
         }
-        calculation::energyCs[channel.id * (calculation::numOfBlocks + (long long)1) + i].insert(channel.id * (calculation::numOfBlocks + (long long)1) + i, channel.id * (calculation::numOfBlocks + (long long)1) + i) = mainElement * 0.5;
+        for (size_t i = 0; i <= calculation::numOfBlocks; ++i)
+            calculation::energyCs[channel.id * (calculation::numOfBlocks + (long long)1) + i].insert(channel.id * (calculation::numOfBlocks + (long long)1) + i, channel.id * (calculation::numOfBlocks + (long long)1) + i) = mainElement * 0.5;
     }
 }
 
