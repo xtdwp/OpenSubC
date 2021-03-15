@@ -3,124 +3,15 @@
 #include "tinyxml.h"
 #include "initialize.h"
 #include "constants.h"
+#include "gap.h"
 #include <iostream>
 #include <vector>
+#include <fuelRod.h>
 
 double opensubc::geometry::boundaryHeight, opensubc::geometry::boundaryWidth;
 std::vector<opensubc::fuelRod> opensubc::geometry::rods;
 std::vector<opensubc::gap> opensubc::geometry::gaps;
 std::vector<opensubc::channel> opensubc::geometry::channels;
-
-unsigned opensubc::fuelRod::num = 0;
-unsigned opensubc::gap::num = 0;
-unsigned opensubc::channel::num = 0;
-
-//给定坐标位置与半径进行初始化
-opensubc::fuelRod::fuelRod(unsigned _id, double _x, double _y, double _r):id(_id), x(_x), y(_y),r(_r)
-{
-	++num;
-}
-
-opensubc::fuelRod::~fuelRod()
-{
-
-}
-
-
-opensubc::gap::gap(unsigned rodId0, unsigned rodId1)
-{
-    id = num++;
-	rodId[0] = rodId0;
-	rodId[1] = rodId1;
-    channelId[0] = channelId[1] = -1;
-}
-
-int opensubc::gap::getOtherChannelId(unsigned _channelId)//获取gap除了输入的通道id之外连接的另一个通道的id
-{
-    return _channelId == channelId[0] ? channelId[1] : channelId[0];
-}
-
-int opensubc::gap::checkGapExistence(unsigned rodId0, unsigned rodId1)
-{
-    for (int i = 0; i < geometry::gaps.size(); ++i)
-    {
-        gap& gap = geometry::gaps[i];
-        if ((gap.rodId[0] == rodId0 && gap.rodId[1] == rodId1) || (gap.rodId[0] == rodId1 && gap.rodId[1] == rodId0))
-            return i;
-    }
-    return -1;
-}
-
-opensubc::channel::channel(unsigned _id, const std::vector<unsigned>& _rodIds)//给定一定数量燃料棒构建单通道
-{
-    ++num;
-    id = _id;
-    rodIds = _rodIds;
-    circleLength.resize(rodIds.size());
-    setChannel();
-}
-
-void opensubc::channel::setChannel()//在初始化之后，根据燃料棒位置分布构造子通道几何（目前只支持最简单的矩形情形）
-{
-    //每个燃料棒都增加该通道id信息
-    for (int i = 0; i < 4; ++i)
-    {
-        geometry::rods[rodIds[i]].channelIds.push_back(id);
-        circleLength[i] = geometry::rods[rodIds[i]].r * PI * 0.5;
-    }
-
-    double r = geometry::rods[rodIds[0]].r;
-    unsigned crossId;//跟第一个燃料棒对角线的燃料棒在数组中的位置
-    //计算面积与浸润周长
-    for (int i = 1; i < 4; ++i)
-    {
-        double dx = abs(geometry::rods[rodIds[0]].x - geometry::rods[rodIds[i]].x);
-        double dy = abs(geometry::rods[rodIds[0]].y - geometry::rods[rodIds[i]].y);
-        if (dx > r && dy > r)
-        {
-            A = dx * dy;
-            crossId = i;
-        }
-    }
-    A -= PI * r * r;
-    //构建gap
-    for (int i = 1; i < 4; ++i)
-    {
-        if (i == crossId)
-            continue;
-        int gapId = gap::checkGapExistence(rodIds[0], rodIds[i]);
-        if (gapId == -1)
-        {
-            geometry::gaps.push_back(gap(rodIds[0], rodIds[i]));
-            geometry::gaps[geometry::gaps.size() - 1].channelId[0] = id;
-            geometry::rods[rodIds[0]].gapIds.push_back(geometry::gaps.size() - 1);
-            geometry::rods[rodIds[i]].gapIds.push_back(geometry::gaps.size() - 1);
-        }
-        else
-        {
-            geometry::gaps[gapId].channelId[1] = id;
-        }
-
-        gapId = gap::checkGapExistence(rodIds[crossId], rodIds[i]);
-        if (gapId == -1)
-        {
-            geometry::gaps.push_back(gap(rodIds[crossId], rodIds[i]));
-            geometry::gaps[geometry::gaps.size() - 1].channelId[0] = id;
-            geometry::rods[rodIds[crossId]].gapIds.push_back(geometry::gaps.size() - 1);
-            geometry::rods[rodIds[i]].gapIds.push_back(geometry::gaps.size() - 1);
-        }
-        else
-        {
-            geometry::gaps[gapId].channelId[1] = id;
-        }
-
-    }
-}
-
-opensubc::channel::~channel()
-{
-
-}
 
 void opensubc::initialize_geometry()
 {

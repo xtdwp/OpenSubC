@@ -78,6 +78,15 @@
     <ClInclude Include="include\tinyxml\tinyxml.h">
       <Filter>头文件\tinyxml</Filter>
     </ClInclude>
+    <ClInclude Include="include\geometry\gap.h">
+      <Filter>头文件\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\geometry\fuelRod.h">
+      <Filter>头文件\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\geometry\channel.h">
+      <Filter>头文件\geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\error.cpp">
@@ -121,6 +130,15 @@
     </ClCompile>
     <ClCompile Include="src\fluids\fluids.cpp">
       <Filter>源文件\fluids</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\gap.cpp">
+      <Filter>源文件\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\fuelRod.cpp">
+      <Filter>源文件\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\channel.cpp">
+      <Filter>源文件\geometry</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

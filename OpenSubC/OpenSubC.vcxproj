@@ -25,6 +25,9 @@
     <ClInclude Include="include\error.h" />
     <ClInclude Include="include\finalize.h" />
     <ClInclude Include="include\fluids\fluids.h" />
+    <ClInclude Include="include\geometry\channel.h" />
+    <ClInclude Include="include\geometry\fuelRod.h" />
+    <ClInclude Include="include\geometry\gap.h" />
     <ClInclude Include="include\geometry\geometry.h" />
     <ClInclude Include="include\initialize.h" />
     <ClInclude Include="include\InputData.h" />
@@ -38,6 +41,9 @@
     <ClCompile Include="src\error.cpp" />
     <ClCompile Include="src\finalize.cpp" />
     <ClCompile Include="src\fluids\fluids.cpp" />
+    <ClCompile Include="src\geometry\channel.cpp" />
+    <ClCompile Include="src\geometry\fuelRod.cpp" />
+    <ClCompile Include="src\geometry\gap.cpp" />
     <ClCompile Include="src\geometry\geometry.cpp" />
     <ClCompile Include="src\initialize.cpp" />
     <ClCompile Include="src\InputData.cpp" />
