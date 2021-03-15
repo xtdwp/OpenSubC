@@ -11,34 +11,39 @@
   <HBOUND>5</HBOUND>          
   <WBOUND>4</WBOUND>
   <NROD>4</NROD>              <!--燃料棒数-->
-  <ROD id="0">
+  <ROD>
+  <ID>0</ID>
   <X>0</X>                    <!--X坐标(mm)-->
   <Y>0</Y>
-  <RROD>4.75</RROD>           <!--燃料棒半径-->
+  <R>4.75</R>           <!--燃料棒半径-->
   <Q>67</Q>                   <!--面热功率（MW/m2）-->
   </ROD>
-  <ROD id="1">
+  <ROD>
+  <ID>1</ID>
   <X>11</X>
   <Y>0</Y>
-  <RROD>4.75</RROD>
+  <R>4.75</R>
   <Q>67</Q>
   </ROD>
-  <ROD id="2">
+  <ROD>
+  <ID>2</ID>
   <X>0</X>
   <Y>11</Y>
-  <RROD>4.75</RROD>
+  <R>4.75</R>
   <Q>67</Q>
   </ROD>
-  <ROD id="3">
+  <ROD>
+  <ID>3</ID>
   <X>11</X>
   <Y>11</Y>
-  <RROD>4.75</RROD>
+  <R>4.75</R>
   <Q>67</Q>
   </ROD>
   <NCHANL>9</NCHANL>          <!--子通道数-->
   <LCHANL>3660</LCHANL>       <!--通道轴向长度（mm）-->
   <NDX>30</NDX>               <!--轴向分段数-->
-  <CHANL id="5">
+  <CHANL>
+  <ID>0</ID>
   <RODID>0</RODID>
   <RODID>1</RODID>
   <RODID>2</RODID>

@@ -1,12 +1,10 @@
+#include <iostream>
+
+#include "initialize.h"
+#include "constants.h"
 #include "geometry.h"
 #include "tinystr.h"
 #include "tinyxml.h"
-#include "initialize.h"
-#include "constants.h"
-#include "gap.h"
-#include <iostream>
-#include <vector>
-#include <fuelRod.h>
 
 double opensubc::geometry::boundaryHeight, opensubc::geometry::boundaryWidth;
 std::vector<opensubc::fuelRod> opensubc::geometry::rods;
@@ -15,64 +13,35 @@ std::vector<opensubc::channel> opensubc::geometry::channels;
 
 void opensubc::initialize_geometry()
 {
-    TiXmlHandle hDoc(&inp);         // hDoc是&inp指向的对象
-    TiXmlElement* p0Elem;            // 指向元素的指针
-    p0Elem = hDoc.FirstChildElement().Element(); //根节点的指针
-    TiXmlHandle hRoot(p0Elem);       // hRoot是根节点
-    TiXmlElement* HBOUNDElem = hRoot.FirstChild("GeometricParameter").FirstChild("HBOUND").Element();
-    TiXmlElement* WBOUNDElem = hRoot.FirstChild("GeometricParameter").FirstChild("WBOUND").Element();
-    geometry::boundaryHeight= atof(HBOUNDElem->GetText()); 
-    geometry::boundaryWidth= atof(WBOUNDElem->GetText());
-    /*std::cout << geometry::boundaryHeight << "  " << geometry::boundaryWidth << std::endl;*/
-    TiXmlElement* RODElem = hRoot.FirstChild("GeometricParameter").FirstChild("ROD").Element(); //当前指向了第一个ROD节点
-    unsigned idtemp;
-    double xtemp, ytemp,rtemp;
-    /*int n = 0;*/
-    for (RODElem; RODElem; RODElem = RODElem->NextSiblingElement()) //燃料棒部分
+    using namespace opensubc::geometry;
+
+    //从整个xml文件中找到几何部分
+    TiXmlNode* geometryData = inp.FirstChild("input")->FirstChild("GeometricParameter");
+
+    //读取边界宽度
+    boundaryHeight = atof(geometryData->FirstChildElement("HBOUND")->GetText());
+    boundaryWidth = atof(geometryData->FirstChildElement("WBOUND")->GetText());
+
+    //遍历燃料棒数据并构建燃料棒对象
+    for (TiXmlNode* rodData = geometryData->IterateChildren("ROD", nullptr); rodData; rodData = geometryData->IterateChildren("ROD", rodData))
     {
-        /*std::cout << n << std::endl;*/
-        TiXmlHandle ROD(RODElem); 
-        TiXmlElement* XElem = ROD.FirstChild("X").Element();
-        if (XElem == NULL)
-            break;
-        TiXmlElement* YElem = ROD.FirstChild("Y").Element();
-        TiXmlElement* RRODElem = ROD.FirstChild("RROD").Element();
-        RODElem->QueryUnsignedAttribute("id", &idtemp);
-        xtemp = atof(XElem->GetText());
-        ytemp = atof(YElem->GetText());
-        rtemp = atof(RRODElem->GetText());
-        fuelRod rodtemp(idtemp, xtemp, ytemp, rtemp);
-        /*std::cout << idtemp << "  " << xtemp << "  " << ytemp << "  " << rtemp << std::endl;*/
-        geometry::rods.push_back(rodtemp);
-        /*std::cout << n++ << std::endl;*/
+        unsigned id = atoi(rodData->FirstChildElement("ID")->GetText());
+        double x = atof(rodData->FirstChildElement("X")->GetText());
+        double y = atof(rodData->FirstChildElement("Y")->GetText());
+        double r = atof(rodData->FirstChildElement("R")->GetText());
+        rods.push_back(fuelRod(id, x, y, r));
     }
-    /*std::cout << "here!" << std::endl;*/
-    TiXmlElement* CHANLElem = hRoot.FirstChild("GeometricParameter").FirstChild("CHANL").Element();
-    /*std::cout << "here!" << std::endl;*/
-    for (CHANLElem; CHANLElem; CHANLElem = CHANLElem->NextSiblingElement())   //通道部分
+
+    //遍历通道信息并构建通道对象与间隙对象（间隙在构造通道时自动构造）
+    for (TiXmlNode* channelData = geometryData->IterateChildren("CHANL", nullptr); channelData; channelData = geometryData->IterateChildren("CHNAL", channelData))
     {
-        TiXmlHandle CHANL(CHANLElem);
-        TiXmlElement* RODIDElem = CHANL.FirstChild("RODID").Element();
-        /*std::cout << "here!" << std::endl;
-        if (RODElem == NULL)
-            std::cout << "NULL!" << std::endl;*/
-        RODIDElem->QueryUnsignedAttribute("id", &idtemp);
-        /*std::cout << "here!" << std::endl;*/
-        unsigned count=0;
-        std::vector <unsigned> RODID;//子通道连接的燃料棒的id的数组
-        for (RODIDElem; RODIDElem; RODIDElem = RODIDElem->NextSiblingElement())
-        {  
-            RODID.push_back(atoi(RODIDElem->GetText()));
-            count++;
-        }
-        //unsigned* rodIdstemp=&RODID[0];        //直接传vector首元素的引用
-        /*for (auto id : RODID)
-            std::cout << id << " ";
-        std::cout << std::endl;*/
-        channel channeltemp(count, RODID);//建议添加id
-        geometry::channels.push_back(channeltemp);
+        unsigned id = atoi(channelData->FirstChildElement("ID")->GetText());
+        std::vector<unsigned> rodIds;
+        TiXmlNode* rodId = nullptr;
+        while (rodId = channelData->IterateChildren("RODID", rodId))
+            rodIds.push_back(atoi(rodId->ToElement()->GetText()));
+        channels.push_back(channel(id, rodIds));
     }
-    //gap部分未写，通道之间连接关系需要在输入卡内完善
 }
 
 void opensubc::finalize_geometry()
