@@ -6,6 +6,8 @@
 #include "geometry.h"
 #include <vector>
 #include <iostream>
+#include <channel.h>
+#include <gap.h>
 
 /**********全局数据存储**********/
         //通道控制体数据

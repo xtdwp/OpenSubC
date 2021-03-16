@@ -5,11 +5,18 @@
 #include "geometry.h"
 #include "tinystr.h"
 #include "tinyxml.h"
+#include "fuelRod.h"
+#include "gap.h"
+#include "channel.h"
 
-double opensubc::geometry::boundaryHeight, opensubc::geometry::boundaryWidth;
-std::vector<opensubc::fuelRod> opensubc::geometry::rods;
-std::vector<opensubc::gap> opensubc::geometry::gaps;
-std::vector<opensubc::channel> opensubc::geometry::channels;
+namespace opensubc {
+    namespace geometry {
+        double boundaryHeight, boundaryWidth;
+        std::vector<opensubc::fuelRod> rods;
+        std::vector<opensubc::gap> gaps;
+        std::vector<opensubc::channel> channels;
+    }
+}
 
 void opensubc::initialize_geometry()
 {
@@ -23,7 +30,8 @@ void opensubc::initialize_geometry()
     boundaryWidth = atof(geometryData->FirstChildElement("WBOUND")->GetText());
 
     //遍历燃料棒数据并构建燃料棒对象
-    for (TiXmlNode* rodData = geometryData->IterateChildren("ROD", nullptr); rodData; rodData = geometryData->IterateChildren("ROD", rodData))
+    TiXmlNode* rodData = nullptr;
+    while (rodData = geometryData->IterateChildren("ROD", rodData))
     {
         unsigned id = atoi(rodData->FirstChildElement("ID")->GetText());
         double x = atof(rodData->FirstChildElement("X")->GetText());
@@ -33,7 +41,8 @@ void opensubc::initialize_geometry()
     }
 
     //遍历通道信息并构建通道对象与间隙对象（间隙在构造通道时自动构造）
-    for (TiXmlNode* channelData = geometryData->IterateChildren("CHANL", nullptr); channelData; channelData = geometryData->IterateChildren("CHNAL", channelData))
+    TiXmlNode* channelData = nullptr;
+    while (channelData = geometryData->IterateChildren("CHNAL", channelData))
     {
         unsigned id = atoi(channelData->FirstChildElement("ID")->GetText());
         std::vector<unsigned> rodIds;
@@ -47,4 +56,30 @@ void opensubc::initialize_geometry()
 void opensubc::finalize_geometry()
 {
 
+}
+
+bool opensubc::checkGapExistence(const fuelRod& rod, BoundaryType boundaryType, unsigned& gapId)//查找该gap是否存在
+{
+    using namespace opensubc::geometry;
+    for (auto& gap : gaps)
+        if (gap.rodIds.size() == 1 && gap.rodIds[0] == rod.id && gap.boundaryType == boundaryType)
+        {
+            gapId = gap.id;
+            return true;
+        }
+    return false;
+}
+
+bool opensubc::checkGapExistence(const fuelRod& rod0, const fuelRod& rod1, unsigned& gapId)//查找该gap是否存在
+{
+    using namespace opensubc::geometry;
+    for (auto& gap : gaps)
+        if (gap.rodIds.size() == 2 && (
+            (gap.rodIds[0] == rod0.id && gap.rodIds[1] == rod1.id)|| 
+            (gap.rodIds[0] == rod1.id && gap.rodIds[1] == rod0.id)))
+        {
+            gapId = gap.id;
+            return true;
+        }
+    return false;
 }
