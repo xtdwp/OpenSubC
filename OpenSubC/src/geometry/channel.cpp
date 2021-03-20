@@ -4,13 +4,9 @@
 #include <iostream>
 #include <fuelRod.h>
 
-unsigned opensubc::channel::num = 0;
-
-opensubc::channel::channel(unsigned _id, const std::vector<unsigned>& _rodIds)//给定一定数量燃料棒构建单通道
+opensubc::channel::channel(unsigned _id, const std::vector<unsigned>& _rodIds, const std::vector<BoundaryType> _boundaryTypes)//给定一定数量燃料棒和边界信息构建单通道
+    :id(_id), rodIds(_rodIds), boundaryTypes(_boundaryTypes)
 {
-    ++num;
-    id = _id;
-    rodIds = _rodIds;
     circleLength.resize(rodIds.size());
     setChannel();
 }
@@ -81,6 +77,7 @@ void opensubc::channel::setCornerChannel()//构建角通道
     A = boundaryHeight * boundaryWidth;//计算通道横截面积
     circleLength.push_back(rod.r * PI * 0.5);//计算燃料棒在该通道内浸润周长
 
+    //创建边界上的两个gap
 
 }
 

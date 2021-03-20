@@ -142,7 +142,7 @@ void opensubc::initConnectMatrix()//初始化连接矩阵
         int connectedChannelId;
         for (unsigned gapid : channel.gapIds)
         {
-            connectedChannelId = geometry::gaps[gapid].getOtherChannelId(channel.id);
+            //connectedChannelId = geometry::gaps[gapid].getOtherChannelId(channel.id);
             if (connectedChannelId == -1) continue;
             for (size_t i = 0; i <= calculation::numOfBlocks; ++i)
                 calculation::energyC.insert(channel.id * (calculation::numOfBlocks + (long long)1) + i, connectedChannelId * (calculation::numOfBlocks + (long long)1) + i) = 1;
@@ -163,7 +163,7 @@ void opensubc::initCrossDirectionMatrix()//初始化横向流量方向矢量（e）矩阵
         int connectedChannelId;
         for (unsigned gapid : channel.gapIds)
         {
-            connectedChannelId = geometry::gaps[gapid].getOtherChannelId(channel.id);
+            //connectedChannelId = geometry::gaps[gapid].getOtherChannelId(channel.id);
             if (connectedChannelId == -1) continue;
             for (size_t i = 0; i <= calculation::numOfBlocks; ++i)
             {
@@ -187,7 +187,7 @@ void opensubc::initHeatConductMatrix()//初始化子通道间热传导矩阵
         for (unsigned gapid : channel.gapIds)
         {
             opensubc::gap& gap = geometry::gaps[gapid];
-            connectedChannelId = gap.getOtherChannelId(channel.id);
+            //connectedChannelId = gap.getOtherChannelId(channel.id);
             if (connectedChannelId == -1) continue;
             mainElement += gap.sk / gap.lk * calculation::GT;
             for (size_t i = 0; i <= calculation::numOfBlocks; ++i)

@@ -3,10 +3,8 @@
 
 namespace opensubc {
 	class fuelRod {
-	private:
-		static unsigned num;
 	public:
-		unsigned id;
+		unsigned id;//id为该燃料棒在数组中的位置
 		double x, y;
 		double r;
 		std::vector<unsigned> channelIds;

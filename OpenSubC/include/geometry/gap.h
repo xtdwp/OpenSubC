@@ -9,10 +9,8 @@ namespace opensubc {
 
 	//间隙定义
 	class gap {
-	private:
-		static unsigned num;
 	public:
-		unsigned id;
+		unsigned id = 0;//id为该间隙在数组中的位置
 		BoundaryType boundaryType;
 		std::vector<unsigned> rodIds;
 		std::vector<unsigned> channelIds;
@@ -21,7 +19,7 @@ namespace opensubc {
 		gap();//边界上的间隙
 		gap(const fuelRod& rod0, const fuelRod& rod1);//根据燃料棒构建间隙（两个燃料棒）
 		gap(const fuelRod& rod, BoundaryType _boundaryType);//根据燃料棒与间隙宽度构建间隙（一个燃料棒与边界）
-		unsigned getOtherChannelId(unsigned channelId);//根据给定的通道id给出该gap连接的另一个通道id
+		bool getOtherChannelId(unsigned channelId, unsigned& otherChannelId);//根据给定的通道id给出该gap连接的另一个通道id
 	};
 }
 

@@ -2,20 +2,16 @@
 #include <geometry.h>
 #include <fuelRod.h>
 
-unsigned opensubc::gap::num = 0;
-
 opensubc::gap::gap()//边界上的间隙
 {
-    //创建间隙id
-    id = num++;
     //记录边界信息
     boundaryType = BoundaryType::NoBoundary;//完全边界的间隙不需要这些信息，随便赋值即可
 }
 
+
+
 opensubc::gap::gap(const fuelRod& rod0, const fuelRod& rod1)//根据燃料棒构建间隙（两个燃料棒）
 {
-    //创建间隙id
-    id = num++;
     //存储燃料棒id
     rodIds.push_back(rod0.id);
     rodIds.push_back(rod1.id);
@@ -29,8 +25,6 @@ opensubc::gap::gap(const fuelRod& rod0, const fuelRod& rod1)//根据燃料棒构建间隙
 
 opensubc::gap::gap(const fuelRod& rod, BoundaryType _boundaryType)//根据燃料棒与间隙宽度构建间隙（一个燃料棒与边界）
 {
-    //创建间隙id
-    id = num++;
     //存储燃料棒id
     rodIds.push_back(rod.id);
     //记录边界信息
@@ -42,7 +36,15 @@ opensubc::gap::gap(const fuelRod& rod, BoundaryType _boundaryType)//根据燃料棒与
         sk = geometry::boundaryHeight;
 }
 
-unsigned opensubc::gap::getOtherChannelId(unsigned channelId)//根据给定的通道id给出该gap连接的另一个通道id
+bool opensubc::gap::getOtherChannelId(unsigned channelId, unsigned& otherChannelId)//根据给定的通道id给出该gap连接的另一个通道id
 {
-
+    if (channelIds.size() != 2)
+        return false;
+    if (channelId == channelIds[0])
+        otherChannelId = channelIds[1];
+    else if (channelId == channelIds[1])
+        otherChannelId = channelIds[0];
+    else
+        return false;
+    return true;
 }
