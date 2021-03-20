@@ -48,6 +48,13 @@
   <RODID>1</RODID>
   <RODID>2</RODID>
   <RODID>3</RODID>
+  <BOUNDARYTYPE>0</BOUNDARYTYPE>
+  </CHANL>
+  <CHANL>
+  <ID>1</ID>
+  <RODID>0</RODID>
+  <BOUNDARYTYPE>2</BOUNDARYTYPE>
+  <BOUNDARYTYPE>4</BOUNDARYTYPE>
   </CHANL>
 </GeometricParameter>
 <FuelHeatingModels>           <!--燃料棒内部温度分布计算（CRTN燃料加热模型）-->
