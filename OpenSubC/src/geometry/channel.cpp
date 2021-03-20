@@ -14,59 +14,12 @@ opensubc::channel::channel(unsigned _id, const std::vector<unsigned>& _rodIds, c
 
 void opensubc::channel::setChannel()//在初始化之后，根据燃料棒位置分布构造子通道几何（目前只支持最简单的矩形情形）
 {
-    ////每个燃料棒都增加该通道id信息
-    //for (int i = 0; i < 4; ++i)
-    //{
-    //    geometry::rods[rodIds[i]].channelIds.push_back(id);
-    //    circleLength[i] = geometry::rods[rodIds[i]].r * PI * 0.5;
-    //}
-
-    //double r = geometry::rods[rodIds[0]].r;
-    //unsigned crossId;//跟第一个燃料棒对角线的燃料棒在数组中的位置
-    ////计算面积与浸润周长
-    //for (int i = 1; i < 4; ++i)
-    //{
-    //    double dx = abs(geometry::rods[rodIds[0]].x - geometry::rods[rodIds[i]].x);
-    //    double dy = abs(geometry::rods[rodIds[0]].y - geometry::rods[rodIds[i]].y);
-    //    if (dx > r && dy > r)
-    //    {
-    //        A = dx * dy;
-    //        crossId = i;
-    //    }
-    //}
-    //A -= PI * r * r;
-    ////构建gap
-    //for (int i = 1; i < 4; ++i)
-    //{
-    //    if (i == crossId)
-    //        continue;
-    //    int gapId = gap::checkGapExistence(rodIds[0], rodIds[i]);
-    //    if (gapId == -1)
-    //    {
-    //        geometry::gaps.push_back(gap(rodIds[0], rodIds[i]));
-    //        geometry::gaps[geometry::gaps.size() - 1].channelIds[0] = id;
-    //        geometry::rods[rodIds[0]].gapIds.push_back(geometry::gaps.size() - 1);
-    //        geometry::rods[rodIds[i]].gapIds.push_back(geometry::gaps.size() - 1);
-    //    }
-    //    else
-    //    {
-    //        geometry::gaps[gapId].channelId[1] = id;
-    //    }
-
-    //    gapId = gap::checkGapExistence(rodIds[crossId], rodIds[i]);
-    //    if (gapId == -1)
-    //    {
-    //        geometry::gaps.push_back(gap(rodIds[crossId], rodIds[i]));
-    //        geometry::gaps[geometry::gaps.size() - 1].channelId[0] = id;
-    //        geometry::rods[rodIds[crossId]].gapIds.push_back(geometry::gaps.size() - 1);
-    //        geometry::rods[rodIds[i]].gapIds.push_back(geometry::gaps.size() - 1);
-    //    }
-    //    else
-    //    {
-    //        geometry::gaps[gapId].channelId[1] = id;
-    //    }
-
-    //}
+    if (rodIds.size() == 1)
+        setCornerChannel();
+    else if (rodIds.size() == 2)
+        setEdgeChannel();
+    else
+        setOrdinaryChannel();
 }
 
 void opensubc::channel::setCornerChannel()//构建角通道
@@ -97,12 +50,56 @@ void opensubc::channel::setEdgeChannel()//构建边通道
 {
     using namespace opensubc::geometry;
 
+    //计算子通道中心点坐标与横截面积及浸润周长
+    if (boundaryTypes[0] == BoundaryType::PositiveX || boundaryTypes[0] == BoundaryType::NegativeX)
+    {
+        x = rods[rodIds[0]].x + boundaryWidth * 0.5;
+        y = (rods[rodIds[0]].y + rods[rodIds[1]].y) * 0.5;
+        A = abs(rods[rodIds[0]].y - rods[rodIds[1]].y) * boundaryWidth;
+    }
+    else if (boundaryTypes[0] == BoundaryType::PositiveY || boundaryTypes[0] == BoundaryType::NegativeY)
+    {
+        x = (rods[rodIds[0]].x + rods[rodIds[1]].x) * 0.5;
+        y = rods[rodIds[0]].y + boundaryHeight * 0.5;
+        A = abs(rods[rodIds[0]].x - rods[rodIds[1]].x) * boundaryHeight;
+    }
 
+    //计算燃料棒在该通道内浸润周长
+    for (auto& rodId : rodIds)
+        circleLength.push_back(rods[rodId].r * PI * 0.5);
+
+    //创建一个边界上的gap
+    addBoundaryGap();
+
+    //创建两个单燃料棒gap
+    addSingleRodGap(rods[rodIds[0]], boundaryTypes[0]);
+    addSingleRodGap(rods[rodIds[1]], boundaryTypes[0]);
+
+    //创建一个普通gap
+    addOrdinaryGap(rods[rodIds[0]], rods[rodIds[1]]);
 }
 
 void opensubc::channel::setOrdinaryChannel()//构建普通的通道
 {
+    using namespace opensubc::geometry;
 
+    //计算子通道中心点坐标与横截面积及浸润周长
+    for (auto& rodId : rodIds)
+    {
+        x += rods[rodId].x;
+        y += rods[rodId].y;
+    }
+    x /= 4;
+    y /= 4;
+    A = 4 * abs(x - rods[rodIds[0]].x) * (y - rods[rodIds[1]].y);
+
+    //计算燃料棒在该通道内浸润周长
+    for (auto& rodId : rodIds)
+        circleLength.push_back(rods[rodId].r * PI * 0.5);
+
+    //创建四个普通gap
+    for (size_t i = 0; i < 3; ++i)
+        addOrdinaryGap(rods[rodIds[i]], rods[rodIds[i + 1]]);
 }
 
 void opensubc::channel::addBoundaryGap()//为该子通道添加一个位于边界的gap
