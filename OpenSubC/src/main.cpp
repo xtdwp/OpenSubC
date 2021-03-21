@@ -61,8 +61,12 @@ int main(int argc, char* argv[]) {
 	for (auto& gap : opensubc::geometry::gaps)
 	{
 		std::cout << gap.id << std::endl;
-		std::cout << gap.rodIds[0] << " " << gap.rodIds[1] << std::endl;
-		std::cout << gap.channelIds[0] << " " << gap.channelIds[1] << std::endl;
+		for (auto& id : gap.rodIds)
+			std::cout << id << " ";
+		std::cout << std::endl;
+		for (auto& id : gap.channelIds)
+			std::cout << id << " ";
+		std::cout << std::endl;
 	}
 	for (auto& channel : opensubc::geometry::channels)
 	{

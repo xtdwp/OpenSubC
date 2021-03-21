@@ -51,11 +51,13 @@ void opensubc::initialize_geometry()
 
     //遍历通道信息并构建通道对象与间隙对象（间隙在构造通道时自动构造）
     TiXmlNode* channelData = nullptr;
-    while (channelData = geometryData->IterateChildren("CHNAL", channelData))
+    while (channelData = geometryData->IterateChildren("CHANL", channelData))
     {
         //存储输入卡定义的id
         unsigned id = atoi(channelData->FirstChildElement("ID")->GetText());
         channelIdConverter.push_back(id);
+
+        std::cout << "id: " << id << std::endl;
 
         //读取输入卡给定的组成该子通道的燃料棒序号
         std::vector<unsigned> rodIds;
@@ -64,8 +66,8 @@ void opensubc::initialize_geometry()
             rodIds.push_back(atoi(rodId->ToElement()->GetText()));
 
         //将输入卡定义的燃料棒id转换为实际使用的燃料棒id
-        for (auto& id : rodIds)
-            id = std::find(rodIdConverter.begin(), rodIdConverter.end(), id) - rodIdConverter.begin();
+        for (auto& rodId : rodIds)
+            rodId = std::find(rodIdConverter.begin(), rodIdConverter.end(), rodId) - rodIdConverter.begin();
 
         //读取输入卡给定的边界信息
         std::vector<BoundaryType> boundaryTypes;
