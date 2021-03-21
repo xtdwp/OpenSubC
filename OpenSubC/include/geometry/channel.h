@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <string>
 
 namespace opensubc {
 
@@ -12,6 +13,7 @@ namespace opensubc {
 	{
 	public:
 		unsigned id;//id为该子通道在数组中的位置
+		unsigned originalId;//输入卡定义的该通道id
 		std::vector<unsigned> gapIds;//间隙id
 		std::vector<unsigned> rodIds;//燃料棒id
 		std::vector<double> circleLength;//各燃料棒在通道内的浸润周长
@@ -30,6 +32,8 @@ namespace opensubc {
 		void addExistsGap(unsigned gapId);//为该子通道添加一个已经存在的gap
 		void setIdOfLastGap();//给gap数组中的最后一个gap增加id相关信息（最后一个说明刚刚创建,需要配套使用）
 		~channel();
+
+		std::string toString()const;//将对象打印成string
 	};
 }
 

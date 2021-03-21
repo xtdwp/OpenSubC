@@ -8,6 +8,7 @@
 opensubc::channel::channel(unsigned _id, const std::vector<unsigned>& _rodIds, const std::vector<BoundaryType> _boundaryTypes)//给定一定数量燃料棒和边界信息构建单通道
     :id(_id), rodIds(_rodIds), boundaryTypes(_boundaryTypes)
 {
+    originalId = opensubc::geometry::channelIdConverter[id];
     setChannel();
 }
 
@@ -30,8 +31,40 @@ void opensubc::channel::setCornerChannel()//构建角通道
     rod.channelIds.push_back(id);//燃料棒增加该通道id
 
     //计算子通道中心点坐标与横截面积
-    x = rod.x + boundaryWidth * 0.5;
-    y = rod.y + boundaryHeight * 0.5;
+    switch (boundaryTypes[0])
+    {
+    case BoundaryType::PositiveX:
+        x = rod.x + boundaryWidth * 0.5;
+        break;
+    case BoundaryType::NegativeX:
+        x = rod.x - boundaryWidth * 0.5;
+        break;
+    case BoundaryType::PositiveY:
+        y = rod.y + boundaryHeight * 0.5;
+        break;
+    case BoundaryType::NegativeY:
+        y = rod.y - boundaryHeight * 0.5;
+        break;
+    default:
+        break;
+    }
+    switch (boundaryTypes[1])
+    {
+    case BoundaryType::PositiveX:
+        x = rod.x + boundaryWidth * 0.5;
+        break;
+    case BoundaryType::NegativeX:
+        x = rod.x - boundaryWidth * 0.5;
+        break;
+    case BoundaryType::PositiveY:
+        y = rod.y + boundaryHeight * 0.5;
+        break;
+    case BoundaryType::NegativeY:
+        y = rod.y - boundaryHeight * 0.5;
+        break;
+    default:
+        break;
+    }
     A = boundaryHeight * boundaryWidth;
 
     //计算燃料棒在该通道内浸润周长
@@ -57,14 +90,20 @@ void opensubc::channel::setEdgeChannel()//构建边通道
     //计算子通道中心点坐标与横截面积及浸润周长
     if (boundaryTypes[0] == BoundaryType::PositiveX || boundaryTypes[0] == BoundaryType::NegativeX)
     {
-        x = rods[rodIds[0]].x + boundaryWidth * 0.5;
+        if (boundaryTypes[0] == BoundaryType::PositiveX)
+            x = rods[rodIds[0]].x + boundaryWidth * 0.5;
+        else
+            x = rods[rodIds[0]].x - boundaryWidth * 0.5;
         y = (rods[rodIds[0]].y + rods[rodIds[1]].y) * 0.5;
         A = abs(rods[rodIds[0]].y - rods[rodIds[1]].y) * boundaryWidth;
     }
     else if (boundaryTypes[0] == BoundaryType::PositiveY || boundaryTypes[0] == BoundaryType::NegativeY)
     {
         x = (rods[rodIds[0]].x + rods[rodIds[1]].x) * 0.5;
-        y = rods[rodIds[0]].y + boundaryHeight * 0.5;
+        if (boundaryTypes[0] == BoundaryType::PositiveY)
+            y = rods[rodIds[0]].y + boundaryHeight * 0.5;
+        else
+            y = rods[rodIds[0]].y - boundaryHeight * 0.5;
         A = abs(rods[rodIds[0]].x - rods[rodIds[1]].x) * boundaryHeight;
     }
 
@@ -205,4 +244,56 @@ void opensubc::channel::setIdOfLastGap()//给gap数组中的最后一个gap增加id相关信息
 opensubc::channel::~channel()
 {
 
+}
+
+std::string opensubc::channel::toString()const
+{
+    //打印开头
+    std::string outputString;
+    for (int i = 0; i < 10; ++i)
+        outputString += "-";
+    outputString += "channel";
+    for (int i = 0; i < 10; ++i)
+        outputString += "-";
+    outputString += "\n";
+
+    //打印id及几何信息
+    outputString += "id: " + std::to_string(id) + ", originalId: " + std::to_string(originalId) + "\n";
+    outputString += "x: " + std::to_string(x) + ", y: " + std::to_string(y) + "\n";
+    outputString += "A: " + std::to_string(A) + "\n";
+
+    //打印边界信息
+    outputString += "boundaryTypes: ";
+    for (auto& boundaryType : boundaryTypes)
+        outputString += std::to_string(static_cast<int>(boundaryType)) + ", ";
+    outputString.erase(outputString.size() - 2);
+    outputString += "\n";
+
+    //打印gap的id
+    outputString += "gapIds: ";
+    for (auto& gapId : gapIds)
+        outputString += std::to_string(gapId) + ", ";
+    outputString.erase(outputString.size() - 2);
+    outputString += "\n";
+
+    //打印燃料棒的id
+    outputString += "rodIds: ";
+    for (auto& rodId : rodIds)
+        outputString += std::to_string(rodId) + ", ";
+    outputString.erase(outputString.size() - 2);
+    outputString += "\n";
+
+    //打印燃料棒浸润周长
+    outputString += "circleLength: ";
+    for (auto& length : circleLength)
+        outputString += std::to_string(length) + ", ";
+    outputString.erase(outputString.size() - 2);
+    outputString += "\n";
+
+    //打印结尾
+    for (int i = 0; i < 27; ++i)
+        outputString += "-";
+    outputString += "\n";
+
+    return outputString;
 }

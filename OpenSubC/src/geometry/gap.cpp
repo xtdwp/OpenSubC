@@ -46,3 +46,40 @@ bool opensubc::gap::getOtherChannelId(unsigned channelId, unsigned& otherChannel
         return false;
     return true;
 }
+
+std::string opensubc::gap::toString()const
+{
+    //打印开头
+    std::string outputString;
+    for (int i = 0; i < 10; ++i)
+        outputString += "-";
+    outputString += "gap";
+    for (int i = 0; i < 10; ++i)
+        outputString += "-";
+    outputString += "\n";
+
+    //打印id及边界信息
+    outputString += "id: " + std::to_string(id) + "\n";
+    outputString += "boundaryType: " + std::to_string(static_cast<int>(boundaryType)) + "\n";
+
+    //打印燃料棒的id
+    outputString += "rodIds: ";
+    for (auto& rodId : rodIds)
+        outputString += std::to_string(rodId) + ", ";
+    outputString.erase(outputString.size() - 2);
+    outputString += "\n";
+
+    //打印子通道id
+    outputString += "channelIds: ";
+    for (auto& channelId : channelIds)
+        outputString += std::to_string(channelId) + ", ";
+    outputString.erase(outputString.size() - 2);
+    outputString += "\n";
+
+    //打印结尾
+    for (int i = 0; i < 23; ++i)
+        outputString += "-";
+    outputString += "\n";
+
+    return outputString;
+}
