@@ -15,7 +15,7 @@ namespace opensubc {
 		BoundaryType boundaryType;
 		std::vector<unsigned> rodIds;
 		std::vector<unsigned> channelIds;
-		double lk = 0, sk = 0;//间隙几何参数
+		double l = 0, s = 0;//间隙几何参数
 
 		gap();//边界上的间隙
 		gap(const fuelRod& rod0, const fuelRod& rod1);//根据燃料棒构建间隙（两个燃料棒）

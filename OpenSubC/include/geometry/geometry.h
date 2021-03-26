@@ -1,5 +1,8 @@
 #pragma once
 #include <vector>
+#include <fuelRod.h>
+#include <gap.h>
+#include <channel.h>
 
 namespace opensubc {
 

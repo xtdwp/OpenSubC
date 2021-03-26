@@ -213,7 +213,7 @@ void opensubc::channel::addExistsGap(unsigned gapId)//为该子通道添加一个已经存在
 
     //计算gap的间隙参数lk
     channel& channel = channels[gap.channelIds[0]];
-    gap.lk = sqrt(pow(channel.x - x, 2) + pow(channel.y - y, 2));
+    gap.l = sqrt(pow(channel.x - x, 2) + pow(channel.y - y, 2));
 
     //间隙增加该子通道的id
     gap.channelIds.push_back(id);

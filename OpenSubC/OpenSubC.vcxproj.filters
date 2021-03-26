@@ -87,6 +87,12 @@
     <ClInclude Include="include\geometry\channel.h">
       <Filter>头文件\geometry</Filter>
     </ClInclude>
+    <ClInclude Include="include\calculations\EnergyEquation.h">
+      <Filter>头文件\calculations</Filter>
+    </ClInclude>
+    <ClInclude Include="include\calculations\AxialMomentumEquation.h">
+      <Filter>头文件\calculations</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\error.cpp">
@@ -139,6 +145,12 @@
     </ClCompile>
     <ClCompile Include="src\geometry\channel.cpp">
       <Filter>源文件\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\calculations\EnergyEquation.cpp">
+      <Filter>源文件\calculations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\calculations\AxialMomentumEquation.cpp">
+      <Filter>源文件\calculations</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

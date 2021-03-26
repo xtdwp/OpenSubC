@@ -19,7 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\calculations\AxialMomentumEquation.h" />
     <ClInclude Include="include\calculations\calculations.h" />
+    <ClInclude Include="include\calculations\EnergyEquation.h" />
     <ClInclude Include="include\capi.h" />
     <ClInclude Include="include\constants.h" />
     <ClInclude Include="include\error.h" />
@@ -37,7 +39,9 @@
     <ClInclude Include="include\tinyxml\tinyxml.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\calculations\AxialMomentumEquation.cpp" />
     <ClCompile Include="src\calculations\calculations.cpp" />
+    <ClCompile Include="src\calculations\EnergyEquation.cpp" />
     <ClCompile Include="src\error.cpp" />
     <ClCompile Include="src\finalize.cpp" />
     <ClCompile Include="src\fluids\fluids.cpp" />

@@ -18,7 +18,7 @@ opensubc::gap::gap(const fuelRod& rod0, const fuelRod& rod1)//根据燃料棒构建间隙
     //记录边界信息
     boundaryType = BoundaryType::NoBoundary;
     //计算间隙宽度,需要判断燃料棒相对方位
-    sk = sqrt(pow(rod0.x - rod1.x, 2) + pow(rod0.y - rod1.y, 2)) - rod0.r - rod1.r;
+    s = sqrt(pow(rod0.x - rod1.x, 2) + pow(rod0.y - rod1.y, 2)) - rod0.r - rod1.r;
 }
 
 opensubc::gap::gap(const fuelRod& rod, BoundaryType _boundaryType)//根据燃料棒与间隙宽度构建间隙（一个燃料棒与边界）
