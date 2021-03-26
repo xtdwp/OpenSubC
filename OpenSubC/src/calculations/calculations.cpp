@@ -20,9 +20,10 @@ namespace opensubc {
         /**********全局计算设置**********/
         double length;//通道长度
         int numOfBlocks;//轴向分段数
-        int numOfChannelData, numOfGapData;//通道数据向量总长度与gap数据向量总长度
+        int numOfChannelData, numOfGapData, numOfRodData;//通道数据向量总长度,gap数据向量总长度与燃料棒数据向量总长度
         double pInitial, TInitial, vInitial;//二氧化碳入口初始条件
         double tStep, tEnd;//时间步长与计算总时长
+        double GT;//热导率几何因子
     }
 }
 
@@ -81,7 +82,7 @@ void opensubc::read_calculation_xml()
         q0.push_back(&q1[i][0]);          
         i++;
     }
-    calculation::q = &q0[0];
+    //calculation::q = &q0[0];
 }
 
 void opensubc::initVectors()//初始化各变量向量

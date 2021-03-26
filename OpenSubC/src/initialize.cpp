@@ -238,7 +238,7 @@ namespace opensubc {
         read_input_xml();
         initialize_geometry();
         std::cout << "geometry initialize successfully!" << std::endl;
-        initialize_calculation();
+        //initialize_calculation();
     }
 
     void read_input_xml()
