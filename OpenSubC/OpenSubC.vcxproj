@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="include\calculations\AxialMomentumEquation.h" />
     <ClInclude Include="include\calculations\calculations.h" />
+    <ClInclude Include="include\calculations\CrossMomentumEquation.h" />
     <ClInclude Include="include\calculations\EnergyEquation.h" />
     <ClInclude Include="include\capi.h" />
     <ClInclude Include="include\constants.h" />
@@ -41,6 +42,7 @@
   <ItemGroup>
     <ClCompile Include="src\calculations\AxialMomentumEquation.cpp" />
     <ClCompile Include="src\calculations\calculations.cpp" />
+    <ClCompile Include="src\calculations\CrossMomentumEquation.cpp" />
     <ClCompile Include="src\calculations\EnergyEquation.cpp" />
     <ClCompile Include="src\error.cpp" />
     <ClCompile Include="src\finalize.cpp" />
