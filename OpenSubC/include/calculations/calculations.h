@@ -33,9 +33,9 @@ namespace opensubc {
 
 	void initVectors();//初始化各变量向量
 
-	void initAxialMomentumEquation();//初始化轴向动量方程所需矩阵
-	void initCrossMomentumEquation();//初始化横向动量方程所需矩阵
-	void initMassEquation();//初始化质量守恒方程所需矩阵
+	//void initAxialMomentumEquation();//初始化轴向动量方程所需矩阵
+	//void initCrossMomentumEquation();//初始化横向动量方程所需矩阵
+	//void initMassEquation();//初始化质量守恒方程所需矩阵
 } // namespace opensubc
 
 #endif // OPENSUBC_SIMULATION_H
