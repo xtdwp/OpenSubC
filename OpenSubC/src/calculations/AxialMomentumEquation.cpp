@@ -83,7 +83,7 @@ void opensubc::calculateAxialMomentumEquation(Eigen::SparseVector<double>& DPx, 
 					Ck1 += (w.coeffRef(gapindex) * (channelid < connectedChannelId ? 1 : -1)) / A;
 				}
 			}
-			DPx.insert(i) = (-R.coeffRef(i)) * pow(m.coeffRef(i - 1), 2) - 9.80665 * rho.coeffRef(i) * cos(theta * PI / 180) + (mn.coeffRef(i) - m.coeffRef(i - 1)) / A / tStep - Ck0 + (m.coeffRef(i) * v.coeffRef(i - 1) / A + U.coeffRef(i - 1) + (length / numOfBlocks) / tStep + R.coeffRef(i) * A * (length / numOfBlocks) * (m.coeffRef(i) + m.coeffRef(i - 1))) * ((rho.coeffRef(i) - rhon.coeffRef(i)) / tStep + Ck1);
+			DPx.insert(i) = (-R.coeffRef(i)) * pow(m.coeffRef(i - 1), 2) - g * rho.coeffRef(i) * cos(theta * PI / 180) + (mn.coeffRef(i) - m.coeffRef(i - 1)) / A / tStep - Ck0 + (m.coeffRef(i) * v.coeffRef(i - 1) / A + U.coeffRef(i - 1) + (length / numOfBlocks) / tStep + R.coeffRef(i) * A * (length / numOfBlocks) * (m.coeffRef(i) + m.coeffRef(i - 1))) * ((rho.coeffRef(i) - rhon.coeffRef(i)) / tStep + Ck1);
 		}
 	}
 	//计算相邻通道的压差Pkj向量

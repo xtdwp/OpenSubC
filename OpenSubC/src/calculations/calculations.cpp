@@ -11,6 +11,7 @@
 #include <EnergyEquation.h>
 #include <AxialMomentumEquation.h>
 #include <CrossMomentumEquation.h>
+#include <MassEquation.h>
 
 namespace opensubc {
 
@@ -40,7 +41,7 @@ void opensubc::initialize_calculation()
     initEnergyEquation();//初始化能量方程所需矩阵
     initAxialMomentumEquation();//初始化轴向动量方程所需矩阵
     initCrossMomentumEquation();//初始化横向动量方程所需矩阵
-    //initMassEquation();//初始化质量守恒方程所需矩阵
+    initMassEquation();//初始化质量守恒方程所需矩阵
 }
 
 void opensubc::read_calculation_xml()
