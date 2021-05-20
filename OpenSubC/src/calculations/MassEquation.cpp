@@ -7,8 +7,8 @@
 namespace opensubc {
 
 	namespace calculation {
-		extern Eigen::SparseMatrix<double> MassA;
-		extern Eigen::SparseVector<double> MassB;//质量方程系数矩阵与常数向量
+		 Eigen::SparseMatrix<double> MassA;
+		 Eigen::VectorXd MassB;//质量方程系数矩阵与常数向量
 	}
 }
 
@@ -16,8 +16,8 @@ void opensubc::initMassEquation()//初始化质量方程
 {
 	using namespace opensubc::calculation;
 	//定义向量长度
-	MassA.resize(numOfGapData, numOfGapData);
-	MassB.resize(numOfGapData);
+	MassA.resize(numOfChannelData, numOfChannelData);
+	MassB.resize(numOfChannelData);
 }
 void opensubc::calculateMassMatrix()//计算质量方程系数矩阵与常数向量
 {
@@ -43,7 +43,12 @@ void opensubc::calculateMassMatrix()//计算质量方程系数矩阵与常数向量
 					ew += w.coeffRef(gapindex) * (channelid < connectedChannelId ? 1 : -1);
 				}
 			}
-			MassB.insert(i) = -channels[channelid].A * length / numOfBlocks / tStep * (rho.coeffRef(i) - rhon.coeffRef(i)) - length / numOfBlocks * ew;
+			MassB(i) = -channels[channelid].A * length / numOfBlocks / tStep * (rho.coeffRef(i) - rhon.coeffRef(i)) - length / numOfBlocks * ew;
+		}
+		else
+		{
+			MassA.insert(i, i) = 1;
+			MassB(i) = m.coeffRef(i);
 		}
 	}
 

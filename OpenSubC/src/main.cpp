@@ -25,12 +25,13 @@
 int main(int argc, char* argv[]) {
 	opensubc::initialize();
 
-	for (auto& rod : opensubc::geometry::rods)
-		std::cout << rod.toString() << std::endl;
+    for (auto& rod : opensubc::geometry::rods)
+	    std::cout << rod.toString() << std::endl;
 	for (auto& gap : opensubc::geometry::gaps)
 		std::cout << gap.toString() << std::endl;
 	for (auto& channel : opensubc::geometry::channels)
 		std::cout << channel.toString() << std::endl;
+	opensubc::calculate();
 
 //    using namespace opensubc;
 //    int err;

@@ -7,7 +7,7 @@ namespace opensubc {
 	namespace calculation {
 		 Eigen::SparseVector<double> v, vk, U, Uk; //·Ö±ğÎªvij¡¢vkj¡¢Uij¡¢Ukj
 		 Eigen::SparseMatrix<double> CrossMomentumA; //ºáÏò¶¯Á¿·½³ÌÏµÊı¾ØÕó 
-		 Eigen::SparseVector<double> CrossMomentumB;//³£ÊıÏòÁ¿
+		 Eigen::VectorXd CrossMomentumB;//³£ÊıÏòÁ¿
 	}
 }
 
@@ -34,20 +34,16 @@ void opensubc::calculateCrossMomentumVectors()//¼ÆËãvij¡¢vkj¡¢Uij¡¢UkjµÈÏòÁ¿
 	//¼ÆËãvijºÍUijµÄÖµ£¨ÔÚËùÓĞµÄ³ö¿ÚÍø¸ñÄÚmij±ØĞë´óÓÚ0£©
 	for (size_t i = 0; i < numOfChannelData; ++i)
 	{
-		if (!checkInletInterval(i))//ÅĞ¶ÏÊÇ²»ÊÇÈë¿ÚĞéÄâÍø¸ñ£¬Èç¹û²»ÊÇÔò½øĞĞÌîĞ´
-		{
 			if (m.coeffRef(i) > 0)
 				v.insert(i) = 1 / rho.coeffRef(i);
 			else
 				v.insert(i) = 1 / rho.coeffRef(i + (long long)1);
 			U.insert(i) = v.coeffRef(i) * m.coeffRef(i) / channels[i / (numOfBlocks + (long long)1)].A;
-		}
+
 	}
 	//¼ÆËãvkjºÍUkjµÄÖµ
 	for (size_t i = 0; i < numOfGapData; ++i)
 	{
-		if (!checkInletInterval(i))//ÅĞ¶ÏÊÇ²»ÊÇÈë¿ÚĞéÄâÍø¸ñ£¬Èç¹û²»ÊÇÔò½øĞĞÌîĞ´
-		{
 			unsigned gapid = i / (numOfBlocks + (long long)1);//µÃµ½¶ÔÓ¦µÄgapid
 			if (!checkBoundaryGap(gapid))//ÅĞ¶ÏÊÇ²»ÊÇ±ß½çÍ¨µÀ£¬Èç¹û²»ÊÇÔò½øĞĞÌîĞ´
 			{
@@ -63,7 +59,6 @@ void opensubc::calculateCrossMomentumVectors()//¼ÆËãvij¡¢vkj¡¢Uij¡¢UkjµÈÏòÁ¿
 				vk.insert(i) = vk_value;
 				Uk.insert(i) = Uk_value;
 			}
-		}
 	}	
 }
 void opensubc::calculateCrossMomentumMatrix()//¼ÆËãºáÏò¶¯Á¿·½³ÌÏµÊı¾ØÕóÓë³£ÊıÏòÁ¿
@@ -91,11 +86,24 @@ void opensubc::calculateCrossMomentumMatrix()//¼ÆËãºáÏò¶¯Á¿·½³ÌÏµÊı¾ØÕóÓë³£ÊıÏòÁ
 					CrossMomentumA.insert(row, row - (long long)1) = -Uk.coeffRef(row - (long long)1);
 				CrossMomentumA.insert(row, row) = coeffkj;
 				//¼ÆËã³£ÊıÏòÁ¿
-				CrossMomentumB.insert(row) = gaps[gapid].l / gaps[gapid].s * length / numOfBlocks * Pk.coeffRef(row - (long long)1) + length / numOfBlocks / tStep * wn.coeffRef(row);
+				CrossMomentumB(row) = gaps[gapid].l / gaps[gapid].s * length / numOfBlocks * Pk.coeffRef(row - (long long)1) + length / numOfBlocks / tStep * wn.coeffRef(row);
 
 			}
+			//ÈÃ±ß½çÍ¨µÀµÄwµÈÓÚ0
+			else
+			{
+				CrossMomentumA.insert(row, row) = 1;
+				CrossMomentumB(row) = 0;
+			}
+		}
+		//ÈÃÈë¿Ú´¦µÄw²»±ä
+		else
+		{
+			CrossMomentumA.insert(row, row) = 1;
+			CrossMomentumB(row) = w.coeffRef(row);
 		}
 	}
+
 
 }
 bool opensubc::checkInletInterval(int i)//ÅĞ¶ÏÊÇ²»ÊÇÈë¿Ú´¦Íø¸ñ£¬£¬ÊÇÔò·µ»ØÕæ

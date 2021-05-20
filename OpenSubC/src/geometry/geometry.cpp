@@ -29,8 +29,8 @@ void opensubc::initialize_geometry()
     TiXmlNode* geometryData = inp.FirstChild("input")->FirstChild("GeometricParameter");
 
     //读取边界宽度
-    boundaryHeight = atof(geometryData->FirstChildElement("HBOUND")->GetText());
-    boundaryWidth = atof(geometryData->FirstChildElement("WBOUND")->GetText());
+    boundaryHeight = atof(geometryData->FirstChildElement("HBOUND")->GetText())/1000;
+    boundaryWidth = atof(geometryData->FirstChildElement("WBOUND")->GetText())/1000;
 
     //遍历燃料棒数据并构建燃料棒对象
     TiXmlNode* rodData = nullptr;
@@ -41,9 +41,9 @@ void opensubc::initialize_geometry()
         rodIdConverter.push_back(id);
 
         //读取燃料棒几何信息
-        double x = atof(rodData->FirstChildElement("X")->GetText());
-        double y = atof(rodData->FirstChildElement("Y")->GetText());
-        double r = atof(rodData->FirstChildElement("R")->GetText());
+        double x = atof(rodData->FirstChildElement("X")->GetText())/1000;
+        double y = atof(rodData->FirstChildElement("Y")->GetText())/1000;
+        double r = atof(rodData->FirstChildElement("R")->GetText())/1000;
 
         //构建燃料棒并存入数组
         rods.push_back(fuelRod(rodIdConverter.size() - 1, x, y, r));

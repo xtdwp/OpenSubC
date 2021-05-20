@@ -7,7 +7,7 @@
 namespace opensubc {
 
 	namespace calculation {
-		Eigen::SparseVector<double> DPx, R, Uk1, Pk; //分别为压力梯度dP/dX、变量Rij、变量Ukj、相邻通道间的压差Pkj
+		Eigen::VectorXd DPx, R, Uk1, Pk; //分别为压力梯度dP/dX、变量Rij、变量Ukj、相邻通道间的压差Pkj
 	}
 }
 
@@ -19,6 +19,7 @@ void opensubc::initAxialMomentumEquation()//初始化轴向动量方程
 	R.resize(numOfChannelData);
 	Uk1.resize(numOfGapData);
 	Pk.resize(numOfGapData);	
+	Pk.setZero();
 }
 void opensubc::calculateAxialMomentumVectors()//计算Rij、Ukj等向量
 {
@@ -28,22 +29,16 @@ void opensubc::calculateAxialMomentumVectors()//计算Rij、Ukj等向量
 	R.setZero();
 	Uk1.setZero();
 	//计算Rij向量
-	for (size_t i = 0; i < numOfChannelData; ++i)
+	for (int i = 0; i < numOfChannelData; ++i)
 	{
 		if (!checkInletInterval(i))//判断是不是入口虚拟网格，如果不是则进行填写
 		{
 			unsigned channelid = i / (numOfBlocks + (long long)1);//得到对应的channelid
-			double circleLength_t = 0;
-			for (auto& circleLength0 : channels[channelid].circleLength)//计算热周
-			{
-				circleLength_t += circleLength0 ;
-			}
-			double Dh = 4 * channels[channelid].A / circleLength_t;
-			R.insert(i) = ((f.coeffRef(i) / rho.coeffRef(i) / Dh+K.coeffRef(i)*v.coeffRef(i)/ (length / numOfBlocks)) / 2+(v.coeffRef(i)- v.coeffRef(i-1))/ (length / numOfBlocks)) / pow(channels[channelid].A, 2);
+			R(i) = ((f.coeffRef(i) / rho.coeffRef(i) / channels[channelid].Dh +K.coeffRef(i)*v.coeffRef(i)/ (length / numOfBlocks)) / 2+(v.coeffRef(i)- v.coeffRef(i-(long long)1))/ (length / numOfBlocks)) / pow(channels[channelid].A, 2);
 		}
 	}
 	//计算Ukj向量
-	for (size_t i = 0; i < numOfGapData; ++i)
+	for (int i = 0; i < numOfGapData; ++i)
 	{
 		if (!checkInletInterval(i))//判断是不是入口虚拟网格，如果不是则进行填写
 		{
@@ -51,22 +46,22 @@ void opensubc::calculateAxialMomentumVectors()//计算Rij、Ukj等向量
 			if (!checkBoundaryGap(gapid))//判断是不是边界通道，如果不是则进行填写
 			{
 				if (w.coeffRef(i) > 0)//判断wkj的大小，大于零，则取小通道（channelIds[0]）的Uij，否则取大通道的Uij
-					Uk1.insert(i) = v.coeffRef(gaps[gapid].channelIds[0] * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1));
+					Uk1(i) = v.coeffRef(gaps[gapid].channelIds[0] * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1));
 				else
-					Uk1.insert(i) = v.coeffRef(gaps[gapid].channelIds[1] * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1));
+					Uk1(i) = v.coeffRef(gaps[gapid].channelIds[1] * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1));
 			}
 		}
 	}
 	
 }
-void opensubc::calculateAxialMomentumEquation(Eigen::SparseVector<double>& DPx, Eigen::SparseVector<double>& Pk)//计算压力梯度和相邻通道的压差
+void opensubc::calculateAxialMomentumEquation()//计算压力梯度和相邻通道的压差
 {
 	using namespace opensubc::calculation;
 	using namespace opensubc::geometry;
 	DPx.setZero();
 	Pk.setZero();
 	//计算压力梯度DPx向量
-	for (size_t i = 0; i < numOfChannelData; ++i)
+	for (int i = 0; i < numOfChannelData; ++i)
 	{
 		if (!checkInletInterval(i))//判断是不是入口虚拟网格，如果不是则进行填写
 		{
@@ -83,22 +78,22 @@ void opensubc::calculateAxialMomentumEquation(Eigen::SparseVector<double>& DPx, 
 					Ck1 += (w.coeffRef(gapindex) * (channelid < connectedChannelId ? 1 : -1)) / A;
 				}
 			}
-			DPx.insert(i) = (-R.coeffRef(i)) * pow(m.coeffRef(i - 1), 2) - g * rho.coeffRef(i) * cos(theta * PI / 180) + (mn.coeffRef(i) - m.coeffRef(i - 1)) / A / tStep - Ck0 + (m.coeffRef(i) * v.coeffRef(i - 1) / A + U.coeffRef(i - 1) + (length / numOfBlocks) / tStep + R.coeffRef(i) * A * (length / numOfBlocks) * (m.coeffRef(i) + m.coeffRef(i - 1))) * ((rho.coeffRef(i) - rhon.coeffRef(i)) / tStep + Ck1);
+			DPx(i) = (-R.coeffRef(i)) * pow(m.coeffRef(i - (long long)1), 2) - g * rho.coeffRef(i) * cos(theta * PI / 180) + (mn.coeffRef(i) - m.coeffRef(i - (long long)1)) / A / tStep - Ck0 + (2*U.coeffRef(i) + (length / numOfBlocks) / tStep + R.coeffRef(i) * A * (length / numOfBlocks) * (m.coeffRef(i) + m.coeffRef(i - (long long)1))) * ((rho.coeffRef(i) - rhon.coeffRef(i)) / tStep + Ck1);
 		}
 	}
 	//计算相邻通道的压差Pkj向量
-	for (size_t i = 0; i < numOfGapData; ++i)
+	for (int i = 0; i < numOfGapData; ++i)
 	{
 		unsigned gapid = i / (numOfBlocks + (long long)1);//得到对应的gapid
 		if (!checkBoundaryGap(gapid))//判断是不是边界通道，如果不是则进行填写
 		{
 			if (checkInletInterval(i))//判断是不是入口虚拟网格,如果是，则认为相邻通道压差为0
 			{
-				Pk.insert(i) = 0;
+				Pk(i) = 0;
 			}
 			else
 			{
-				Pk.insert(i) = Pk.coeffRef(i - 1) + (length / numOfBlocks) * (DPx.coeffRef(gaps[gapid].channelIds[0] * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1)) - DPx.coeffRef(gaps[gapid].channelIds[1] * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1)));
+				Pk(i) = Pk.coeffRef(i - (long long)1) + (length / numOfBlocks) * (DPx.coeffRef(gaps[gapid].channelIds[0] * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1)) - DPx.coeffRef(gaps[gapid].channelIds[1] * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1)));
 			}
 		}
 		

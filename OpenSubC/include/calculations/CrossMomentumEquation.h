@@ -6,7 +6,7 @@ namespace opensubc {
 	namespace calculation {
 		extern Eigen::SparseVector<double> v, vk,U,Uk; //分别为vij、vkj、Uij、Ukj
 		extern Eigen::SparseMatrix<double> CrossMomentumA;  
-		extern Eigen::SparseVector<double> CrossMomentumB;//横向动量方程系数矩阵与常数向量
+		extern Eigen::VectorXd CrossMomentumB;//横向动量方程系数矩阵与常数向量
 	}
 
 	void initCrossMomentumEquation();//初始化横向动量方程
