@@ -43,6 +43,7 @@ void opensubc::read_calculation_xml()
     TiXmlElement* p0Elem;            // 指向元素的指针
     p0Elem = hDoc.FirstChildElement().Element(); //根节点的指针
     TiXmlHandle hRoot(p0Elem);       // hRoot是根节点
+
     TiXmlElement* LCHANLElem = hRoot.FirstChild("GeometricParameter").FirstChild("LCHANL").Element(); //当前指向了LCHANL节点
     calculation::length= atof(LCHANLElem->GetText());
     TiXmlElement* NDXElem = hRoot.FirstChild("GeometricParameter").FirstChild("NDX").Element(); 
@@ -59,6 +60,7 @@ void opensubc::read_calculation_xml()
     calculation::tEnd = atof(TENDElem->GetText());
     TiXmlElement* RODElem = hRoot.FirstChild("GeometricParameter").FirstChild("ROD").Element();
     TiXmlElement* NRODElem = hRoot.FirstChild("GeometricParameter").FirstChild("NROD").Element();
+
     unsigned NROD= atoi(NRODElem->GetText());
     std::vector<std::vector<double>> q1(NROD,std::vector<double>(calculation::numOfBlocks));//存放面热功率的vector二维数组
     double Q;
