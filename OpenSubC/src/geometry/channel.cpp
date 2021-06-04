@@ -65,10 +65,11 @@ void opensubc::channel::setCornerChannel()//构建角通道
     default:
         break;
     }
-    A = boundaryHeight * boundaryWidth;
+    A = boundaryHeight * boundaryWidth-PI*rod.r*rod.r/4;
 
     //计算燃料棒在该通道内浸润周长
     circleLength.push_back(rod.r * PI * 0.5);
+    Dh = 4 * A / circleLength[0];
 
     //创建边界上的两个gap
     addBoundaryGap();
@@ -95,7 +96,7 @@ void opensubc::channel::setEdgeChannel()//构建边通道
         else
             x = rods[rodIds[0]].x - boundaryWidth * 0.5;
         y = (rods[rodIds[0]].y + rods[rodIds[1]].y) * 0.5;
-        A = abs(rods[rodIds[0]].y - rods[rodIds[1]].y) * boundaryWidth;
+        A = abs(rods[rodIds[0]].y - rods[rodIds[1]].y) * boundaryWidth- PI * (rods[rodIds[0]].r * rods[rodIds[0]].r + rods[rodIds[1]].r *rods[rodIds[1]].r)/4;
     }
     else if (boundaryTypes[0] == BoundaryType::PositiveY || boundaryTypes[0] == BoundaryType::NegativeY)
     {
@@ -104,13 +105,17 @@ void opensubc::channel::setEdgeChannel()//构建边通道
             y = rods[rodIds[0]].y + boundaryHeight * 0.5;
         else
             y = rods[rodIds[0]].y - boundaryHeight * 0.5;
-        A = abs(rods[rodIds[0]].x - rods[rodIds[1]].x) * boundaryHeight;
+        A = abs(rods[rodIds[0]].x - rods[rodIds[1]].x) * boundaryHeight - PI * (rods[rodIds[0]].r * rods[rodIds[0]].r + rods[rodIds[1]].r * rods[rodIds[1]].r) / 4;
     }
-
-    //计算燃料棒在该通道内浸润周长
+    
+    //计算燃料棒在该通道内浸润周长与热周
+    double circleLength_t = 0;
     for (auto& rodId : rodIds)
+    {
         circleLength.push_back(rods[rodId].r * PI * 0.5);
-
+        circleLength_t += rods[rodId].r * PI * 0.5;
+    }
+    Dh = 4 * A / circleLength_t;
     //创建一个边界上的gap
     addBoundaryGap();
 
@@ -129,20 +134,27 @@ void opensubc::channel::setOrdinaryChannel()//构建普通的通道
     //各燃料棒添加该通道id
     for (auto& rodId : rodIds)
         rods[rodId].channelIds.push_back(id);
+    double rodA = 0;
 
     //计算子通道中心点坐标与横截面积及浸润周长
     for (auto& rodId : rodIds)
     {
         x += rods[rodId].x;
         y += rods[rodId].y;
+        rodA += PI * rods[rodId].r * rods[rodId].r / 4;
     }
     x /= 4;
     y /= 4;
-    A = 4 * abs(x - rods[rodIds[0]].x) * (y - rods[rodIds[0]].y);
+    A = 4 * abs(x - rods[rodIds[0]].x) * (y - rods[rodIds[0]].y)-rodA;
 
-    //计算燃料棒在该通道内浸润周长
+   //计算燃料棒在该通道内浸润周长与热周
+    double circleLength_t = 0;
     for (auto& rodId : rodIds)
+    {
         circleLength.push_back(rods[rodId].r * PI * 0.5);
+        circleLength_t += rods[rodId].r * PI * 0.5;
+    }
+    Dh = 4 * A / circleLength_t;
 
     std::cout << "here!" << std::endl;
 
@@ -261,6 +273,8 @@ std::string opensubc::channel::toString()const
     outputString += "id: " + std::to_string(id) + ", originalId: " + std::to_string(originalId) + "\n";
     outputString += "x: " + std::to_string(x) + ", y: " + std::to_string(y) + "\n";
     outputString += "A: " + std::to_string(A) + "\n";
+    outputString += "Dh: " + std::to_string(Dh) + "\n";
+
 
     //打印边界信息
     outputString += "boundaryTypes: ";

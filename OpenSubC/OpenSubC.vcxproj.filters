@@ -93,6 +93,12 @@
     <ClInclude Include="include\calculations\AxialMomentumEquation.h">
       <Filter>头文件\calculations</Filter>
     </ClInclude>
+    <ClInclude Include="include\calculations\CrossMomentumEquation.h">
+      <Filter>头文件\calculations</Filter>
+    </ClInclude>
+    <ClInclude Include="include\calculations\MassEquation.h">
+      <Filter>头文件\calculations</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\error.cpp">
@@ -150,6 +156,12 @@
       <Filter>源文件\calculations</Filter>
     </ClCompile>
     <ClCompile Include="src\calculations\AxialMomentumEquation.cpp">
+      <Filter>源文件\calculations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\calculations\CrossMomentumEquation.cpp">
+      <Filter>源文件\calculations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\calculations\MassEquation.cpp">
       <Filter>源文件\calculations</Filter>
     </ClCompile>
   </ItemGroup>

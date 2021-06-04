@@ -21,7 +21,9 @@
   <ItemGroup>
     <ClInclude Include="include\calculations\AxialMomentumEquation.h" />
     <ClInclude Include="include\calculations\calculations.h" />
+    <ClInclude Include="include\calculations\CrossMomentumEquation.h" />
     <ClInclude Include="include\calculations\EnergyEquation.h" />
+    <ClInclude Include="include\calculations\MassEquation.h" />
     <ClInclude Include="include\capi.h" />
     <ClInclude Include="include\constants.h" />
     <ClInclude Include="include\error.h" />
@@ -41,7 +43,9 @@
   <ItemGroup>
     <ClCompile Include="src\calculations\AxialMomentumEquation.cpp" />
     <ClCompile Include="src\calculations\calculations.cpp" />
+    <ClCompile Include="src\calculations\CrossMomentumEquation.cpp" />
     <ClCompile Include="src\calculations\EnergyEquation.cpp" />
+    <ClCompile Include="src\calculations\MassEquation.cpp" />
     <ClCompile Include="src\error.cpp" />
     <ClCompile Include="src\finalize.cpp" />
     <ClCompile Include="src\fluids\fluids.cpp" />
@@ -184,6 +188,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>strmiids.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

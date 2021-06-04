@@ -5,5 +5,10 @@
 #include<iomanip>
 #include<vector>
 
-//这是一个控制输出格式的库，提供了一些方便的小功能
+namespace opensubc {
+	//输出所有子通道的物性信息
+	void output(double t);
+
+
+}
 

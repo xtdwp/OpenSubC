@@ -22,15 +22,37 @@
 #include <gap.h>
 
 
+
+
 int main(int argc, char* argv[]) {
+	/*Eigen::SparseMatrix<double> M;
+	M.resize(2, 2);
+	M.insert(0, 0) = 1;
+	M.insert(0, 1) = 2;
+	M.insert(1, 0) = 3;
+	M.insert(1, 1) = 4;
+
+	Eigen::Vector2d x, y;
+	y[0] = 3;
+	y[1] = 7;
+
+	Eigen::SparseLU<Eigen::SparseMatrix<double>> sc;
+	sc.compute(M);
+	x = sc.solve(y);
+
+	std::cout << M << std::endl << y << std::endl << x << std::endl;
+
+	system("pause");*/
+
 	opensubc::initialize();
 
-	for (auto& rod : opensubc::geometry::rods)
-		std::cout << rod.toString() << std::endl;
+    for (auto& rod : opensubc::geometry::rods)
+	    std::cout << rod.toString() << std::endl;
 	for (auto& gap : opensubc::geometry::gaps)
 		std::cout << gap.toString() << std::endl;
 	for (auto& channel : opensubc::geometry::channels)
 		std::cout << channel.toString() << std::endl;
+	opensubc::calculate();
 
 //    using namespace opensubc;
 //    int err;

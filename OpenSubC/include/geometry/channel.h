@@ -18,7 +18,7 @@ namespace opensubc {
 		std::vector<unsigned> rodIds;//燃料棒id
 		std::vector<double> circleLength;//各燃料棒在通道内的浸润周长
 		std::vector<BoundaryType> boundaryTypes;//通道是否在边界的信息
-		double x, y, A;//子通道中心点坐标与横截面积
+		double x, y, A ,Dh;//子通道中心点坐标与横截面积与热周
 
 		channel() = default;
 		channel(unsigned _id, const std::vector<unsigned>& _rodIds, const std::vector<BoundaryType> _boundaryTypes);//给定一定数量燃料棒和边界信息构建单通道

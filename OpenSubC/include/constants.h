@@ -19,6 +19,7 @@ namespace opensubc {
 
 	// Math Constants
 	constexpr double PI{ 3.141592653589793};
+	constexpr double g{ 9.80665 };
 
 } // namespace opensubc
 
