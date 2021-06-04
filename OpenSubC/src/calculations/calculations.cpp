@@ -134,6 +134,8 @@ void opensubc::calculate_Tw_f()//计算壁温和摩擦因子
                 Tw = T.coeffRef(i) + q0 / (k.coeffRef(i) / channels[channelid].Dh * 0.0069 * pow(Re, 0.9) * pow(Pr, 0.66) * pow(rhow / rho.coeffRef(i), 0.43) * (1 + 2.4 / ((i % (numOfBlocks + (long long)1) * length / numOfBlocks - length / numOfBlocks / 2) / channels[channelid].Dh)) * (1 + 0.9120 * pow(Re, -0.1) * pow(Pr, 0.4) * (1 - 2.0043 * exp(-channels[channelid].Dh / (2 * rods[channels[channelid].rodIds[0]].r)))));
 
             }while (abs(Tw_old - Tw) > 0.01);//收敛条件
+            /*std::cout << Tw << std::endl;
+            system("pause");*/
             //计算摩擦因子f
             uw= opensubc::CO2::u(rhow, Tw) / 1000000;
             hw = opensubc::CO2::h((P.coeffRef(i) + P.coeffRef(i - 1)) / 2 / 1000000, Tw) * 1000;//同一压力下，壁温下的焓值
@@ -207,15 +209,22 @@ void opensubc::calculate()
         m_t.resize(numOfChannelData);
         P_t.resize(numOfChannelData);
         double m_max,P_max;//存储质量流量和压力在上次迭代和本次计算结果相对偏差的最大值
+        //int n = 0;
         do
         {
+            /*std::cout << n++ << std::endl;
+            system("pause");*/
             m_t = m;//将上一次质量流量和压力计算结果赋给m_t、P_t
             P_t = P;
             m_max = 0; P_max = 0;
             //采用Cholesky分解得到所有守恒方程线性方程组的解
             calculateEnergyMatrix();
-            SimplicialCholesky<SparseMatrix < double >> cholEnergy(EnergyA);  // 执行A的 Cholesky分解
+            /*std::cout << EnergyA << std::endl;
+            std::cout << EnergyB << std::endl << std::endl;*/
+            SparseLU<SparseMatrix < double >> cholEnergy(EnergyA);  // 执行A的 Cholesky分解
             h = cholEnergy.solve(EnergyB);
+            /*std::cout << h << std::endl;
+            system("pause");*/
             calculateCrossMomentumVectors();
             calculateCrossMomentumMatrix();
             SimplicialCholesky<SparseMatrix < double >> cholCrossMomentum0(CrossMomentumA);
@@ -237,6 +246,8 @@ void opensubc::calculate()
                     P(i) = P(i - 1) + DPx(i) * length / numOfBlocks;
                     rho(i) = opensubc::CO2::rho((P.coeffRef(i)+ P.coeffRef(i-1))/2 / 1000000, h.coeffRef(i)/ 1000);
                     T(i) = opensubc::CO2::t((P.coeffRef(i) + P.coeffRef(i - 1)) / 2 / 1000000, h.coeffRef(i) / 1000);
+                    /*std::cout << h(i) << " " << P(i) << " " <<  T(i) << std::endl;
+                    system("pause");*/
                     k(i) = opensubc::CO2::k(rho.coeffRef(i), T.coeffRef(i)) / 1000;
                     u(i) = opensubc::CO2::u(rho.coeffRef(i), T.coeffRef(i)) / 1000000;
                     cp(i)= opensubc::CO2::cp(h.coeffRef(i) / 1000, (P.coeffRef(i) + P.coeffRef(i - 1)) / 2 / 1000000) * 1000;

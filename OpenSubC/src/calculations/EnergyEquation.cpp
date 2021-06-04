@@ -48,7 +48,8 @@ void opensubc::calculateEnergyMatrix()//计算能量方程系数矩阵与常数向量
 				}
 			}
 			EnergyA.insert(i, i) = channels[channelid].A * (length / numOfBlocks) / tStep * rhon.coeffRef(i) - (m.coeffRef(i) > 0 ? 0 : 1) * m.coeffRef(i) + (m.coeffRef(i - 1) > 0 ? 1 : 0) * m.coeffRef(i - 1) + (length / numOfBlocks) * Ck;
-			EnergyA.insert(i, i + 1) = (m.coeffRef(i) > 0 ? 0 : 1) * m.coeffRef(i);
+			if (i < numOfChannelData - (long long)1)
+				EnergyA.insert(i, i + 1) = (m.coeffRef(i) > 0 ? 0 : 1) * m.coeffRef(i);
 			EnergyA.insert(i, i - 1) = -(m.coeffRef(i - 1) > 0 ? 1 : 0) * m.coeffRef(i - 1);
 			double Cq = 0;//表示燃料棒导热求和项
 			for (auto& rodId : channels[channelid].rodIds)//遍历子通道连接的所有rod
@@ -56,6 +57,8 @@ void opensubc::calculateEnergyMatrix()//计算能量方程系数矩阵与常数向量
 				Cq += (length / numOfBlocks) * rods[rodId].r * PI / 2 * q.coeffRef(rodId * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1)) * (1 + rQ);
 			}
 			EnergyB(i) = channels[channelid].A * (length / numOfBlocks) / tStep * rhon.coeffRef(i) * hn.coeffRef(i) + Cq + Ct;
+			/*std::cout << "q  " << Cq << "  " << Ct << std::endl;
+			system("pause");*/
 		}
 		//让入口处的h不变
 		else
@@ -64,6 +67,4 @@ void opensubc::calculateEnergyMatrix()//计算能量方程系数矩阵与常数向量
 			EnergyB(i) = h.coeffRef(i);
 		}
 	}
-
-
 }
