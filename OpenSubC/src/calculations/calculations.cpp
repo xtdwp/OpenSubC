@@ -164,6 +164,17 @@ void opensubc::calculate_wTurbulence()//计算湍流交混速率w’
                 double Re0 = m.coeffRef(channelindex0) * channels[gaps[gapid].channelIds[0]].Dh / channels[gaps[gapid].channelIds[0]].A / u.coeffRef(channelindex0);//计算雷诺数
                 double Re1 = m.coeffRef(channelindex1) * channels[gaps[gapid].channelIds[1]].Dh / channels[gaps[gapid].channelIds[1]].A / u.coeffRef(channelindex1);
                 //计算湍流交混速率
+                /*std::cout << pow((channels[gaps[gapid].channelIds[0]].Dh + channels[gaps[gapid].channelIds[1]].Dh) / 2 / gaps[gapid].s, 0.236) << " "
+                    << pow((Re0 + Re1) / 2, -0.073)
+                    << " "
+                    << gaps[gapid].s
+                    << " "
+                    << (m.coeffRef(channelindex0) / channels[gaps[gapid].channelIds[0]].A + m.coeffRef(channelindex1) / channels[gaps[gapid].channelIds[1]].A)
+                    << std::endl;*/
+                std::cout << pow((Re0 + Re1) / 2, -0.073) << " " << Re0 << " " << Re1 << std::endl;
+
+                /*double pow_Re0_Re1 = pow((Re0 + Re1) / 2, -0.073);*/
+
                 wTurbulence(i) = 0.05136 * pow((channels[gaps[gapid].channelIds[0]].Dh + channels[gaps[gapid].channelIds[1]].Dh) / 2 / gaps[gapid].s, 0.236) * pow((Re0 + Re1) / 2, -0.073) * gaps[gapid].s * (m.coeffRef(channelindex0) / channels[gaps[gapid].channelIds[0]].A + m.coeffRef(channelindex1) / channels[gaps[gapid].channelIds[1]].A) / 2;
             }
         }
@@ -209,11 +220,11 @@ void opensubc::calculate()
         m_t.resize(numOfChannelData);
         P_t.resize(numOfChannelData);
         double m_max,P_max;//存储质量流量和压力在上次迭代和本次计算结果相对偏差的最大值
-        //int n = 0;
+        int n = 0;
         do
         {
-            /*std::cout << n++ << std::endl;
-            system("pause");*/
+            std::cout << n++ << std::endl;
+            system("pause");
             m_t = m;//将上一次质量流量和压力计算结果赋给m_t、P_t
             P_t = P;
             m_max = 0; P_max = 0;
@@ -229,6 +240,8 @@ void opensubc::calculate()
             calculateCrossMomentumMatrix();
             SimplicialCholesky<SparseMatrix < double >> cholCrossMomentum0(CrossMomentumA);
             w = cholCrossMomentum0.solve(CrossMomentumB);
+            std::cout << w << std::endl;
+            system("pause");
             calculateAxialMomentumVectors();
             calculateAxialMomentumEquation();
             calculateCrossMomentumMatrix();
@@ -255,6 +268,9 @@ void opensubc::calculate()
                     P_max = P_max > abs((P.coeffRef(i) - P_t.coeffRef(i)) / P_t.coeffRef(i)) ? P_max : abs((P.coeffRef(i) - P_t.coeffRef(i)) / P_t.coeffRef(i));
                 }
             }
+
+            output(t);
+
             calculate_wTurbulence();//计算湍流交混速率w’
             calculate_Tw_f();//计算本次迭代的壁温和摩擦因子f
         }while ((m_max > 0.001)||(P_max>0.001));//收敛条件

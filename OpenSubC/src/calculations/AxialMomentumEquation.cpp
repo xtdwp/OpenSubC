@@ -81,8 +81,17 @@ void opensubc::calculateAxialMomentumEquation()//计算压力梯度和相邻通道的压差
 				}
 			}
 			DPx(i) = (-R.coeffRef(i)) * pow(m.coeffRef(i - (long long)1), 2) - g * rho.coeffRef(i) * cos(theta * PI / 180) + (mn.coeffRef(i) - m.coeffRef(i - (long long)1)) / A / tStep - Ck0 + (2*U.coeffRef(i) + (length / numOfBlocks) / tStep + R.coeffRef(i) * A * (length / numOfBlocks) * (m.coeffRef(i) + m.coeffRef(i - (long long)1))) * ((rho.coeffRef(i) - rhon.coeffRef(i)) / tStep + Ck1);
-			/*std::cout << DPx(i) << " " << (-R.coeffRef(i)) << " " << pow(m.coeffRef(i - (long long)1), 2) << std::endl;
-			system("pause");*/
+			std::cout << DPx(i) << " " << (-R.coeffRef(i)) * pow(m.coeffRef(i - (long long)1), 2) 
+				<< " " 
+				<< g * rho.coeffRef(i) * cos(theta * PI / 180)
+				<< " "
+				<< (mn.coeffRef(i) - m.coeffRef(i - (long long)1)) / A / tStep
+				<< " "
+				<< Ck0
+				<< " "
+				<< (2 * U.coeffRef(i) + (length / numOfBlocks) / tStep + R.coeffRef(i) * A * (length / numOfBlocks) * (m.coeffRef(i) + m.coeffRef(i - (long long)1))) * ((rho.coeffRef(i) - rhon.coeffRef(i)) / tStep + Ck1)
+				<< std::endl;
+			system("pause");
 		}
 	}
 	//计算相邻通道的压差Pkj向量
