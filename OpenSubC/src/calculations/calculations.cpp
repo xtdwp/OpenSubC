@@ -209,11 +209,11 @@ void opensubc::calculate()
         m_t.resize(numOfChannelData);
         P_t.resize(numOfChannelData);
         double m_max,P_max;//存储质量流量和压力在上次迭代和本次计算结果相对偏差的最大值
-        //int n = 0;
+        int n = 0;
         do
         {
-            /*std::cout << n++ << std::endl;
-            system("pause");*/
+            std::cout << n++ << std::endl;
+            system("pause");
             m_t = m;//将上一次质量流量和压力计算结果赋给m_t、P_t
             P_t = P;
             m_max = 0; P_max = 0;
@@ -255,9 +255,11 @@ void opensubc::calculate()
                     P_max = P_max > abs((P.coeffRef(i) - P_t.coeffRef(i)) / P_t.coeffRef(i)) ? P_max : abs((P.coeffRef(i) - P_t.coeffRef(i)) / P_t.coeffRef(i));
                 }
             }
+            output(t);
+            system("pause");
             calculate_wTurbulence();//计算湍流交混速率w’
             calculate_Tw_f();//计算本次迭代的壁温和摩擦因子f
-        }while ((m_max > 0.001)||(P_max>0.001));//收敛条件
+        }while ((m_max > 1e-7)||(P_max>1e-7));//收敛条件
         //将本次时间步长的结果输出
         output(t);
     }

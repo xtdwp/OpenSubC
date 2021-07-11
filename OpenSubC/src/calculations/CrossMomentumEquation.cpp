@@ -86,7 +86,7 @@ void opensubc::calculateCrossMomentumMatrix()//¼ÆËãºáÏò¶¯Á¿·½³ÌÏµÊı¾ØÕóÓë³£ÊıÏòÁ
 					CrossMomentumA.insert(row, row - (long long)1) = -Uk.coeffRef(row - (long long)1);
 				CrossMomentumA.insert(row, row) = coeffkj;
 				//¼ÆËã³£ÊıÏòÁ¿
-				CrossMomentumB(row) = gaps[gapid].l / gaps[gapid].s * length / numOfBlocks * Pk.coeffRef(row - (long long)1) + length / numOfBlocks / tStep * wn.coeffRef(row);
+				CrossMomentumB(row) = gaps[gapid].s / gaps[gapid].l * length / numOfBlocks * Pk.coeffRef(row - (long long)1) + length / numOfBlocks / tStep * wn.coeffRef(row);
 
 			}
 			//ÈÃ±ß½çÍ¨µÀµÄwµÈÓÚ0
