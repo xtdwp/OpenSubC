@@ -46,7 +46,7 @@
   <R>4.75</R>
   <Q>193</Q>
   </ROD>
-  <NCHANL>2</NCHANL>          <!--子通道数-->
+  <NCHANL>5</NCHANL>          <!--子通道数-->
   <LCHANL>3660</LCHANL>       <!--通道轴向长度（mm）-->
   <NDX>3</NDX>               <!--轴向分段数-->
   <CHANL>
@@ -62,6 +62,24 @@
   <RODID>10</RODID>
   <RODID>20</RODID>
   <BOUNDARYTYPE>4</BOUNDARYTYPE>
+  </CHANL>
+  <CHANL>
+  <ID>30</ID>
+  <RODID>30</RODID>
+  <RODID>40</RODID>
+  <BOUNDARYTYPE>3</BOUNDARYTYPE>
+  </CHANL>
+  <CHANL>
+  <ID>40</ID>
+  <RODID>10</RODID>
+  <RODID>30</RODID>
+  <BOUNDARYTYPE>2</BOUNDARYTYPE>
+  </CHANL>
+  <CHANL>
+  <ID>50</ID>
+  <RODID>20</RODID>
+  <RODID>40</RODID>
+  <BOUNDARYTYPE>1</BOUNDARYTYPE>
   </CHANL>
 </GeometricParameter>
 <FuelHeatingModels>           <!--燃料棒内部温度分布计算（CRTN燃料加热模型）-->
