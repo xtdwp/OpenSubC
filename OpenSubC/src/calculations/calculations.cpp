@@ -171,7 +171,7 @@ void opensubc::calculate_wTurbulence()//计算湍流交混速率w’
                     << " "
                     << (m.coeffRef(channelindex0) / channels[gaps[gapid].channelIds[0]].A + m.coeffRef(channelindex1) / channels[gaps[gapid].channelIds[1]].A)
                     << std::endl;*/
-                std::cout << pow((Re0 + Re1) / 2, -0.073) << " " << Re0 << " " << Re1 << std::endl;
+                /*std::cout << pow((Re0 + Re1) / 2, -0.073) << " " << Re0 << " " << Re1 << std::endl;*/
 
                 /*double pow_Re0_Re1 = pow((Re0 + Re1) / 2, -0.073);*/
 
@@ -238,17 +238,26 @@ void opensubc::calculate()
             system("pause");*/
             calculateCrossMomentumVectors();
             calculateCrossMomentumMatrix();
-            SimplicialCholesky<SparseMatrix < double >> cholCrossMomentum0(CrossMomentumA);
+            SparseLU<SparseMatrix < double >> cholCrossMomentum0(CrossMomentumA);
             w = cholCrossMomentum0.solve(CrossMomentumB);
+            std::cout << CrossMomentumA << std::endl;
+            system("pause");
+            std::cout << CrossMomentumB << std::endl;
+            system("pause");
             std::cout << w << std::endl;
             system("pause");
             calculateAxialMomentumVectors();
             calculateAxialMomentumEquation();
             calculateCrossMomentumMatrix();
-            SimplicialCholesky<SparseMatrix < double >> cholCrossMomentum1(CrossMomentumA);
+            SparseLU<SparseMatrix < double >> cholCrossMomentum1(CrossMomentumA);
             w = cholCrossMomentum1.solve(CrossMomentumB);
+            std::cout << CrossMomentumA << std::endl;
+            system("pause");
+            std::cout << CrossMomentumB << std::endl;
+            system("pause");
+            std::cout << w << std::endl;
             calculateMassMatrix();
-            SimplicialCholesky<SparseMatrix < double >> cholMass(MassA);
+            SparseLU<SparseMatrix < double >> cholMass(MassA);
             m = cholMass.solve(MassB);
 
             //由压力梯度计算压强，以及其它所有物性
@@ -271,7 +280,7 @@ void opensubc::calculate()
 
             output(t);
 
-            calculate_wTurbulence();//计算湍流交混速率w’
+            //calculate_wTurbulence();//计算湍流交混速率w’
             calculate_Tw_f();//计算本次迭代的壁温和摩擦因子f
         }while ((m_max > 0.001)||(P_max>0.001));//收敛条件
         //将本次时间步长的结果输出
