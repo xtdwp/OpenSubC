@@ -12,6 +12,7 @@ namespace opensubc {
 		/**********全局数据存储(向量与矩阵)**********/
 		extern Eigen::VectorXd P, h, T, rho, m, w, wTurbulence, k, q,f,K, Tw,u，cp;//最后三项为轴向摩擦压降和局部压降系数、壁温、粘度、定压比热容
 		extern Eigen::VectorXd hn, rhon, mn, wn;//储存上个时间步长的计算结果
+		extern Eigen::VectorXd mk, wk;//储存上个计算步的结果,用于次松弛
 
 		/**********全局计算设置**********/
 		extern double length;//通道长度
@@ -24,6 +25,8 @@ namespace opensubc {
 		extern double fT;//横向动量因子
 		extern double theta;//通道与竖直方向的夹角(角度值)
 		extern double rQ;//常数，表示燃料棒产生的裂变功率直接进入冷却剂的比例；
+
+		extern double d1, d2;//分别为w与m的次松弛因子
 	}
 
 	/**********************功能函数**********************/
