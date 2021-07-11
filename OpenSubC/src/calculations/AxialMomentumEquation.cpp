@@ -98,7 +98,7 @@ void opensubc::calculateAxialMomentumEquation()//计算压力梯度和相邻通道的压差
 			}
 			else
 			{
-				Pk(i) = Pk.coeffRef(i - (long long)1) - (length / numOfBlocks) * (DPx.coeffRef(gaps[gapid].channelIds[0] * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1)) - DPx.coeffRef(gaps[gapid].channelIds[1] * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1)));
+				Pk(i) = Pk.coeffRef(i - (long long)1) - (length / numOfBlocks) * (DPx.coeffRef(gaps[gapid].channelIds[0] * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1)) - DPx.coeffRef(gaps[gapid].channelIds[1] * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1)))*(gaps[gapid].channelIds[0] < gaps[gapid].channelIds[1] ? 1 : -1);
 			}
 		}
 		

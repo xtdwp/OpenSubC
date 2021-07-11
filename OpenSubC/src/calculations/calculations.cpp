@@ -24,6 +24,7 @@ namespace opensubc {
         /**********全局数据存储(向量与矩阵)**********/
         Eigen::VectorXd P, h, T, rho, m, w, wTurbulence, k, q,f,K,Tw,u,cp;//最后三项为轴向摩擦压降和局部压降系数、壁温、粘度、定压比热容
         Eigen::VectorXd hn, rhon, mn, wn;//储存上个时间步长的计算结果
+        Eigen::VectorXd mk, wk;//储存上个时间步的计算结果,用于次松弛计算
 
         /**********全局计算设置**********/
         double length;//通道长度
@@ -36,6 +37,7 @@ namespace opensubc {
         double fT;//横向动量因子
         double theta;//通道与竖直方向的夹角（角度值）
         double rQ;//常数，表示燃料棒产生的裂变功率直接进入冷却剂的比例；
+        double d1 = 0.00001, d2 = 0.00001;//w和m的次松弛因子
     }
 }
 
@@ -104,6 +106,7 @@ void opensubc::initVectors()//初始化各变量向量
     using namespace opensubc::calculation;
     P.resize(numOfChannelData); h.resize(numOfChannelData); T.resize(numOfChannelData); rho.resize(numOfChannelData); m.resize(numOfChannelData); w.resize(numOfGapData); wTurbulence.resize(numOfGapData); k.resize(numOfChannelData); f.resize(numOfChannelData); K.resize(numOfChannelData); Tw.resize(numOfChannelData); u.resize(numOfChannelData); cp.resize(numOfChannelData);
     hn.resize(numOfChannelData); rhon.resize(numOfChannelData); mn.resize(numOfChannelData); wn.resize(numOfGapData);
+    mk.resize(numOfChannelData);wk.resize(numOfGapData);
 }
 
 void opensubc::calculate_Tw_f()//计算壁温和摩擦因子
@@ -212,8 +215,10 @@ void opensubc::calculate()
         int n = 0;
         do
         {
+            wk = w;
+            mk = m;
             std::cout << n++ << std::endl;
-            system("pause");
+            //system("pause");
             m_t = m;//将上一次质量流量和压力计算结果赋给m_t、P_t
             P_t = P;
             m_max = 0; P_max = 0;
@@ -229,14 +234,19 @@ void opensubc::calculate()
             calculateCrossMomentumMatrix();
             SimplicialCholesky<SparseMatrix < double >> cholCrossMomentum0(CrossMomentumA);
             w = cholCrossMomentum0.solve(CrossMomentumB);
+            w = (1 - d1) * wk + d1 * w;
+            wk = w;
+            //std::cout << w << std::endl;
             calculateAxialMomentumVectors();
             calculateAxialMomentumEquation();
             calculateCrossMomentumMatrix();
             SimplicialCholesky<SparseMatrix < double >> cholCrossMomentum1(CrossMomentumA);
             w = cholCrossMomentum1.solve(CrossMomentumB);
+            w = (1 - d1) * wk + d1 * w;
             calculateMassMatrix();
             SimplicialCholesky<SparseMatrix < double >> cholMass(MassA);
             m = cholMass.solve(MassB);
+            m = (1 - d2) * mk + d2 * m;
 
             //由压力梯度计算压强，以及其它所有物性
             for (size_t i = 0; i < numOfChannelData; ++i)
@@ -256,12 +266,13 @@ void opensubc::calculate()
                 }
             }
             output(t);
-            system("pause");
+            //system("pause");
             calculate_wTurbulence();//计算湍流交混速率w’
             calculate_Tw_f();//计算本次迭代的壁温和摩擦因子f
-        }while ((m_max > 1e-7)||(P_max>1e-7));//收敛条件
+        }while (((m_max > 1e-8)||(P_max>1e-8))&&(n<20));//收敛条件
         //将本次时间步长的结果输出
         output(t);
+        system("pause");
     }
 }
 
