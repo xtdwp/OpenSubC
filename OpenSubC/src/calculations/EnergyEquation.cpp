@@ -43,6 +43,7 @@ void opensubc::calculateEnergyMatrix()//计算能量方程系数矩阵与常数向量
 					unsigned gapindex = gapId * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1);//对应的gap的控制体在gap向量中的索引
 					ew = w.coeffRef(gapindex) * (channelid < connectedChannelId ? 1 : -1);
 					Ck += wTurbulence.coeffRef(gapindex) - (ew > 0 ? 0 : 1) * ew;
+					/*std::cout << wTurbulence.coeffRef(gapindex) << std::endl;*/
 					EnergyA.insert(i, (connectedChannelId * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1))) = -(length / numOfBlocks) * (wTurbulence.coeffRef(gapindex) - (ew > 0 ? 0 : 1) * ew);
 					Ct -= (length / numOfBlocks) * GT * (k.coeffRef(i) + k.coeffRef(connectedChannelId * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1))) / 2 / gaps[gapId].l * gaps[gapId].s * (T.coeffRef(i) - T.coeffRef(connectedChannelId * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1)));
 				}

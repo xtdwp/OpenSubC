@@ -167,6 +167,17 @@ void opensubc::calculate_wTurbulence()//计算湍流交混速率w’
                 double Re0 = m.coeffRef(channelindex0) * channels[gaps[gapid].channelIds[0]].Dh / channels[gaps[gapid].channelIds[0]].A / u.coeffRef(channelindex0);//计算雷诺数
                 double Re1 = m.coeffRef(channelindex1) * channels[gaps[gapid].channelIds[1]].Dh / channels[gaps[gapid].channelIds[1]].A / u.coeffRef(channelindex1);
                 //计算湍流交混速率
+                /*std::cout << pow((channels[gaps[gapid].channelIds[0]].Dh + channels[gaps[gapid].channelIds[1]].Dh) / 2 / gaps[gapid].s, 0.236) << " "
+                    << pow((Re0 + Re1) / 2, -0.073)
+                    << " "
+                    << gaps[gapid].s
+                    << " "
+                    << (m.coeffRef(channelindex0) / channels[gaps[gapid].channelIds[0]].A + m.coeffRef(channelindex1) / channels[gaps[gapid].channelIds[1]].A)
+                    << std::endl;*/
+                /*std::cout << pow((Re0 + Re1) / 2, -0.073) << " " << Re0 << " " << Re1 << std::endl;*/
+
+                /*double pow_Re0_Re1 = pow((Re0 + Re1) / 2, -0.073);*/
+
                 wTurbulence(i) = 0.05136 * pow((channels[gaps[gapid].channelIds[0]].Dh + channels[gaps[gapid].channelIds[1]].Dh) / 2 / gaps[gapid].s, 0.236) * pow((Re0 + Re1) / 2, -0.073) * gaps[gapid].s * (m.coeffRef(channelindex0) / channels[gaps[gapid].channelIds[0]].A + m.coeffRef(channelindex1) / channels[gaps[gapid].channelIds[1]].A) / 2;
             }
         }
@@ -232,7 +243,7 @@ void opensubc::calculate()
             system("pause");*/
             calculateCrossMomentumVectors();
             calculateCrossMomentumMatrix();
-            SimplicialCholesky<SparseMatrix < double >> cholCrossMomentum0(CrossMomentumA);
+            SparseLU<SparseMatrix < double >> cholCrossMomentum0(CrossMomentumA);
             w = cholCrossMomentum0.solve(CrossMomentumB);
             w = (1 - d1) * wk + d1 * w;
             wk = w;
@@ -240,11 +251,11 @@ void opensubc::calculate()
             calculateAxialMomentumVectors();
             calculateAxialMomentumEquation();
             calculateCrossMomentumMatrix();
-            SimplicialCholesky<SparseMatrix < double >> cholCrossMomentum1(CrossMomentumA);
+            SparseLU<SparseMatrix < double >> cholCrossMomentum1(CrossMomentumA);
             w = cholCrossMomentum1.solve(CrossMomentumB);
             w = (1 - d1) * wk + d1 * w;
             calculateMassMatrix();
-            SimplicialCholesky<SparseMatrix < double >> cholMass(MassA);
+            SparseLU<SparseMatrix < double >> cholMass(MassA);
             m = cholMass.solve(MassB);
             m = (1 - d2) * mk + d2 * m;
 
