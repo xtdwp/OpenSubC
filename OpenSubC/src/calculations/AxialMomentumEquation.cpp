@@ -81,24 +81,27 @@ void opensubc::calculateAxialMomentumEquation()//计算压力梯度和相邻通道的压差
 				}
 			}
 			DPx(i) = (-R.coeffRef(i)) * pow(m.coeffRef(i - (long long)1), 2) - g * rho.coeffRef(i) * cos(theta * PI / 180) + (mn.coeffRef(i) - m.coeffRef(i - (long long)1)) / A / tStep - Ck0 + (2*U.coeffRef(i) + (length / numOfBlocks) / tStep + R.coeffRef(i) * A * (length / numOfBlocks) * (m.coeffRef(i) + m.coeffRef(i - (long long)1))) * ((rho.coeffRef(i) - rhon.coeffRef(i)) / tStep + Ck1);
-			DPx(i) /= g;
-			/*std::cout << DPx(i) << " " << (-R.coeffRef(i)) << " " << pow(m.coeffRef(i - (long long)1), 2) << std::endl;
-			system("pause");*/
+			//std::cout << DPx(i) << std::endl;
+			//system("pause");
 		}
 	}
 	//计算相邻通道的压差Pkj向量
-	for (int i = 0; i < numOfGapData; ++i)
+	for (int i = numOfGapData - 1; i >= 0; --i)
 	{
 		unsigned gapid = i / (numOfBlocks + (long long)1);//得到对应的gapid
 		if (!checkBoundaryGap(gapid))//判断是不是边界通道，如果不是则进行填写
 		{
-			if (checkInletInterval(i))//判断是不是入口虚拟网格,如果是，则认为相邻通道压差为0
+			//if (checkInletInterval(i))//判断是不是入口虚拟网格,如果是，则认为相邻通道压差为0
+			//{
+			//	Pk(i) = 0;
+			//}
+			if (i % (numOfBlocks + (long long)1) == numOfBlocks)//判断是不是出口网格,如果是，则认为相邻通道压差为0
 			{
 				Pk(i) = 0;
 			}
 			else
 			{
-				Pk(i) = Pk.coeffRef(i - (long long)1) - (length / numOfBlocks) * (DPx.coeffRef(gaps[gapid].channelIds[0] * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1)) - DPx.coeffRef(gaps[gapid].channelIds[1] * (numOfBlocks + (long long)1) + i % (numOfBlocks + (long long)1)))*(gaps[gapid].channelIds[0] < gaps[gapid].channelIds[1] ? 1 : -1);
+				Pk(i) = Pk.coeffRef(i + (long long)1) - (length / numOfBlocks) * (DPx.coeffRef(gaps[gapid].channelIds[0] * (numOfBlocks + (long long)1) + (i + 1) % (numOfBlocks + (long long)1)) - DPx.coeffRef(gaps[gapid].channelIds[1] * (numOfBlocks + (long long)1) + (i + 1) % (numOfBlocks + (long long)1)))*(gaps[gapid].channelIds[0] < gaps[gapid].channelIds[1] ? 1 : -1);
 			}
 		}
 		

@@ -37,7 +37,7 @@ namespace opensubc {
         double fT;//横向动量因子
         double theta;//通道与竖直方向的夹角（角度值）
         double rQ;//常数，表示燃料棒产生的裂变功率直接进入冷却剂的比例；
-        double d1 = 0.000001, d2 = 0.000001;//w和m的次松弛因子
+        double d1 = 1e-9, d2 = 1e-9;//w和m的次松弛因子
     }
 }
 
@@ -228,7 +228,8 @@ void opensubc::calculate()
         {
             wk = w;
             mk = m;
-            //std::cout << n++ << std::endl;
+            //n++;
+            std::cout << n++ << std::endl;
             //system("pause");
             m_t = m;//将上一次质量流量和压力计算结果赋给m_t、P_t
             P_t = P;
@@ -247,24 +248,30 @@ void opensubc::calculate()
             w = cholCrossMomentum0.solve(CrossMomentumB);
             w = (1 - d1) * wk + d1 * w;
             wk = w;
-            //std::cout << w << std::endl;
             calculateAxialMomentumVectors();
             calculateAxialMomentumEquation();
             calculateCrossMomentumMatrix();
             SparseLU<SparseMatrix < double >> cholCrossMomentum1(CrossMomentumA);
             w = cholCrossMomentum1.solve(CrossMomentumB);
             w = (1 - d1) * wk + d1 * w;
+            /*std::cout << w << std::endl;
+            std::cout << std::endl << Pk << std::endl;*/
             calculateMassMatrix();
             SparseLU<SparseMatrix < double >> cholMass(MassA);
             m = cholMass.solve(MassB);
             m = (1 - d2) * mk + d2 * m;
+
+            //计算压强
+            for(int i = numOfChannelData - 1; i >= 0; --i)
+                if(i % (numOfBlocks + (long long)1) != numOfBlocks)
+                    P(i) = P(i+(long long)1) - DPx(i) * length / numOfBlocks;
 
             //由压力梯度计算压强，以及其它所有物性
             for (size_t i = 0; i < numOfChannelData; ++i)
             {
                 if (!checkInletInterval(i))//判断是不是入口虚拟网格，如果不是则进行填写
                 {
-                    P(i) = P(i - 1) + DPx(i) * length / numOfBlocks;
+                    //P(i) = P(i - 1) + DPx(i) * length / numOfBlocks;
                     rho(i) = opensubc::CO2::rho((P.coeffRef(i)+ P.coeffRef(i-1))/2 / 1000000, h.coeffRef(i)/ 1000);
                     T(i) = opensubc::CO2::t((P.coeffRef(i) + P.coeffRef(i - 1)) / 2 / 1000000, h.coeffRef(i) / 1000);
                     /*std::cout << h(i) << " " << P(i) << " " <<  T(i) << std::endl;
@@ -276,13 +283,20 @@ void opensubc::calculate()
                     P_max = P_max > abs((P.coeffRef(i) - P_t.coeffRef(i)) / P_t.coeffRef(i)) ? P_max : abs((P.coeffRef(i) - P_t.coeffRef(i)) / P_t.coeffRef(i));
                 }
             }
-            //output(t);
-            //system("pause");
+            /*if (t > 1.1)
+            {
+                output(t);
+                system("pause");
+            }*/
             calculate_wTurbulence();//计算湍流交混速率w’
             calculate_Tw_f();//计算本次迭代的壁温和摩擦因子f
-        }while (((m_max > 1e-8)||(P_max>1e-8))&&(n<100000));//收敛条件
+        }while (((m_max > 1e-7)||(P_max>1e-7))&&(n<1000000));//收敛条件
         //将本次时间步长的结果输出
+        /*d1 = 0.8;
+        d2 = 0.8;*/
         output(t);
+        std::cout << n << std::endl;
+        system("pause");
         system("pause");
     }
 }

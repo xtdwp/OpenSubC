@@ -2,6 +2,7 @@
 #include <calculations.h>
 #include <geometry.h>
 #include <AxialMomentumEquation.h>
+#include <constants.h>
 
 namespace opensubc {
 	namespace calculation {
@@ -75,7 +76,7 @@ void opensubc::calculateCrossMomentumMatrix()//¼ÆËãºáÏò¶¯Á¿·½³ÌÏµÊı¾ØÕóÓë³£ÊıÏòÁ
 			if (!checkBoundaryGap(gapid))//ÅĞ¶ÏÊÇ²»ÊÇ±ß½çÍ¨µÀ£¬Èç¹û²»ÊÇÔò½øĞĞÌîĞ´
 			{    
 				//¼ÆËãºáÏò¶¯Á¿·½³ÌÏµÊı¾ØÕó
-				double coeffkj = length / numOfBlocks / tStep + KG * vk.coeffRef(row) * w.coeffRef(row) * length / numOfBlocks / gaps[gapid].l / gaps[gapid].s / 2;//wkjµÄÏµÊı
+				double coeffkj = length / numOfBlocks / tStep + KG * vk.coeffRef(row) * abs(w.coeffRef(row)) * length / numOfBlocks / gaps[gapid].l / gaps[gapid].s / 2;//wkjµÄÏµÊı
 				if (Uk.coeffRef(row) > 0)
 					coeffkj += Uk.coeffRef(row);
 				else
@@ -86,8 +87,7 @@ void opensubc::calculateCrossMomentumMatrix()//¼ÆËãºáÏò¶¯Á¿·½³ÌÏµÊı¾ØÕóÓë³£ÊıÏòÁ
 					CrossMomentumA.insert(row, row - (long long)1) = -Uk.coeffRef(row - (long long)1);
 				CrossMomentumA.insert(row, row) = coeffkj;
 				//¼ÆËã³£ÊıÏòÁ¿
-				CrossMomentumB(row) = gaps[gapid].s / gaps[gapid].l * length / numOfBlocks * Pk.coeffRef(row - (long long)1) + length / numOfBlocks / tStep * wn.coeffRef(row);
-
+				CrossMomentumB(row) = gaps[gapid].s / gaps[gapid].l * length / numOfBlocks * (Pk.coeffRef(row - (long long)1) + Pk.coeffRef(row)) / 2 + length / numOfBlocks / tStep * wn.coeffRef(row);
 			}
 			//ÈÃ±ß½çÍ¨µÀµÄwµÈÓÚ0
 			else
