@@ -37,7 +37,7 @@ namespace opensubc {
         double fT;//横向动量因子
         double theta;//通道与竖直方向的夹角（角度值）
         double rQ;//常数，表示燃料棒产生的裂变功率直接进入冷却剂的比例；
-        double d1 = 1e-9, d2 = 1e-9;//w和m的次松弛因子
+        double d1 = 0.8, d2 = 0.8;//w和m的次松弛因子
     }
 }
 
@@ -191,6 +191,10 @@ void opensubc::calculate()
 {
     using namespace opensubc::calculation;
     using namespace opensubc::geometry;
+
+    Eigen::SparseMatrix<double> Wp(numOfChannelData, numOfChannelData);
+    Eigen::VectorXd Bp(numOfChannelData);
+
     //计算入口条件所有物性
     double hInitial = opensubc::CO2::h(pInitial / 1000000, TInitial) * 1000;
     double rhoInitial = opensubc::CO2::rho(pInitial / 1000000, hInitial / 1000);
@@ -242,29 +246,70 @@ void opensubc::calculate()
             h = cholEnergy.solve(EnergyB);
             /*std::cout << h << std::endl;
             system("pause");*/
-            calculateCrossMomentumVectors();
+            /*calculateCrossMomentumVectors();
             calculateCrossMomentumMatrix();
             SparseLU<SparseMatrix < double >> cholCrossMomentum0(CrossMomentumA);
             w = cholCrossMomentum0.solve(CrossMomentumB);
             w = (1 - d1) * wk + d1 * w;
             wk = w;
+            
+            calculateAxialMomentumVectors();
+            calculateAxialMatrixs();
+            Eigen::VectorXd P_new = W1_inverse * ((W2 + W3) * w + B1);
+
             calculateAxialMomentumVectors();
             calculateAxialMomentumEquation();
             calculateCrossMomentumMatrix();
             SparseLU<SparseMatrix < double >> cholCrossMomentum1(CrossMomentumA);
             w = cholCrossMomentum1.solve(CrossMomentumB);
-            w = (1 - d1) * wk + d1 * w;
+            w = (1 - d1) * wk + d1 * w;*/
             /*std::cout << w << std::endl;
             std::cout << std::endl << Pk << std::endl;*/
+
+            calculateAxialMomentumVectors();
+            calculateAxialMatrixs();
+            calculateCrossMomentumVectors();
+            calculateCrossMatrixs();
+            Wp = W1 - (W2 + W3) * W4_inverse * W5;
+            Bp = (W2 + W3) * W4_inverse * B2 + B1;
+            SparseLU<SparseMatrix <double>> sLU(Wp);
+            P = sLU.solve(Bp);
+            w = W4_inverse * (W5 * P + B2);
+            //std::cout << w << std::endl;
+            w = (1 - d1) * wk + d1 * w;
+            /*std::cout << std::endl;
+            std::cout << w << std::endl;*/
+
+            /*calculateCrossMomentumVectors();
+            calculateCrossMatrixs();
+            w = W4_inverse * (W5 * P + B2);
+            w = (1 - d1) * wk + d1 * w;
+            wk = w;
+
+            std::cout << w - wk << std::endl;
+            system("pause");
+
+            calculateAxialMomentumVectors();
+            calculateAxialMatrixs();
+            P = W1_inverse * ((W2 + W3) * w + B1);
+
+            calculateCrossMomentumVectors();
+            calculateCrossMatrixs();
+            w = W4_inverse * (W5 * P + B2);
+            w = (1 - d1) * wk + d1 * w;*/
+
             calculateMassMatrix();
             SparseLU<SparseMatrix < double >> cholMass(MassA);
             m = cholMass.solve(MassB);
             m = (1 - d2) * mk + d2 * m;
 
             //计算压强
-            for(int i = numOfChannelData - 1; i >= 0; --i)
+            /*for(int i = numOfChannelData - 1; i >= 0; --i)
                 if(i % (numOfBlocks + (long long)1) != numOfBlocks)
-                    P(i) = P(i+(long long)1) - DPx(i) * length / numOfBlocks;
+                    P(i) = P(i+(long long)1) - DPx(i + (long long)1) * length / numOfBlocks;
+
+            std::cout << P - P_new << std::endl;
+            system("pause");*/
 
             //由压力梯度计算压强，以及其它所有物性
             for (size_t i = 0; i < numOfChannelData; ++i)
@@ -283,14 +328,14 @@ void opensubc::calculate()
                     P_max = P_max > abs((P.coeffRef(i) - P_t.coeffRef(i)) / P_t.coeffRef(i)) ? P_max : abs((P.coeffRef(i) - P_t.coeffRef(i)) / P_t.coeffRef(i));
                 }
             }
-            /*if (t > 1.1)
-            {
+            //if (t > 1.1)
+            /*{
                 output(t);
                 system("pause");
             }*/
             calculate_wTurbulence();//计算湍流交混速率w’
             calculate_Tw_f();//计算本次迭代的壁温和摩擦因子f
-        }while (((m_max > 1e-7)||(P_max>1e-7))&&(n<1000000));//收敛条件
+        }while (((m_max > 1e-10)||(P_max>1e-10))&&(n<1000));//收敛条件
         //将本次时间步长的结果输出
         /*d1 = 0.8;
         d2 = 0.8;*/

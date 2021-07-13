@@ -29,9 +29,9 @@ opensubc::gap::gap(const fuelRod& rod, BoundaryType _boundaryType)//根据燃料棒与
     boundaryType = _boundaryType;
     //设置间隙宽度
     if (boundaryType == BoundaryType::PositiveX || boundaryType == BoundaryType::NegativeX)
-        s = geometry::boundaryWidth;
+        s = geometry::boundaryWidth - rod.r;
     if (boundaryType == BoundaryType::PositiveY || boundaryType == BoundaryType::NegativeY)
-        s = geometry::boundaryHeight;
+        s = geometry::boundaryHeight - rod.r;
 }
 
 bool opensubc::gap::getOtherChannelId(unsigned channelId, unsigned& otherChannelId)//根据给定的通道id给出该gap连接的另一个通道id

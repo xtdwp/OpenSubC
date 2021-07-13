@@ -5,7 +5,7 @@ namespace opensubc {
 
 	namespace calculation {
 		extern Eigen::VectorXd DPx,R,Uk1,Pk; //分别为压力梯度dP/dX、变量Rij、变量Ukj、相邻通道间的压差Pkj
-		extern Eigen::SparseMatrix<double> W1, W2, W3;
+		extern Eigen::SparseMatrix<double> W1, W2, W3, W1_inverse;
 		extern Eigen::VectorXd B1;
 	}
 

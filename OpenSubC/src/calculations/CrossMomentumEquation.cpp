@@ -140,6 +140,10 @@ void opensubc::calculateCrossMatrixs()//计算W4, W5, W4_inverse和B2
 {
 	using namespace opensubc::calculation;
 	using namespace opensubc::geometry;
+	W4.setZero();
+	W5.setZero();
+	B2.setZero();
+	W4_inverse.setZero();
 	for (size_t row = 0; row < numOfGapData; ++row)//对每一行进行遍历
 	{
 		if (!checkInletInterval(row))//判断是不是入口虚拟网格，如果不是则进行填写

@@ -8,7 +8,7 @@ namespace opensubc {
 
 	namespace calculation {
 		Eigen::VectorXd DPx, R, Uk1, Pk; //分别为压力梯度dP/dX、变量Rij、变量Ukj、相邻通道间的压差Pkj
-		Eigen::SparseMatrix<double> W1, W2, W3;
+		Eigen::SparseMatrix<double> W1, W2, W3, W1_inverse;
 		Eigen::VectorXd B1;
 	}
 }
@@ -26,6 +26,7 @@ void opensubc::initAxialMomentumEquation()//初始化轴向动量方程
 	W1.resize(numOfChannelData, numOfChannelData);
 	W2.resize(numOfChannelData, numOfGapData);
 	W3.resize(numOfChannelData, numOfGapData);
+	W1_inverse.resize(numOfChannelData, numOfChannelData);
 
 	B1.resize(numOfChannelData);
 }
@@ -121,6 +122,10 @@ void opensubc::calculateAxialMatrixs()//计算W1, W2, W3和B1
 {
 	using namespace opensubc::calculation;
 	using namespace opensubc::geometry;
+	W1.setZero();
+	W2.setZero();
+	W3.setZero();
+	B1.setZero();
 	for (int row = 0; row < numOfChannelData; ++row)
 	{
 		if (row % (numOfBlocks + (long long)1) != numOfBlocks)//如果不是出口处
@@ -128,7 +133,9 @@ void opensubc::calculateAxialMatrixs()//计算W1, W2, W3和B1
 			W1.insert(row, row + (long long)1) = numOfBlocks / length;
 			W1.insert(row, row) = -numOfBlocks / length;
 
-			double Ck0, Ck1;
+			double Ck0 = 0, Ck1 = 0, Ck2 = 0;
+			Eigen::SparseMatrix<double> Ck2_M(1, numOfGapData);
+			Ck2_M.setZero();
 			unsigned channelid = row / (numOfBlocks + (long long)1);//得到对应的channelid
 			double A = channels[channelid].A;
 			Ck1 = (2 * U.coeffRef(row + (long long)1) + (length / numOfBlocks) / tStep + R.coeffRef(row + (long long)1) * A * (length / numOfBlocks) * (m.coeffRef(row + (long long)1) + m.coeffRef(row)));
@@ -138,16 +145,30 @@ void opensubc::calculateAxialMatrixs()//计算W1, W2, W3和B1
 				if (gaps[gapId].getOtherChannelId(channelid, connectedChannelId))//如果该gap确实连接了另一个子通道
 				{
 					unsigned gapindex = gapId * (numOfBlocks + (long long)1) + (row + (long long)1) % (numOfBlocks + (long long)1);//对应的gap的控制体在gap向量中的索引
-					W2.insert(row, gapindex) = -w.coeffRef(gapindex) * (channelid < connectedChannelId ? 1 : -1) * Uk1.coeffRef(gapindex) / A;
-					W3.insert(row, gapindex) = Ck1 * (w.coeffRef(gapindex) * (channelid < connectedChannelId ? 1 : -1)) / A;
-					Ck0 += fT * wTurbulence.coeffRef(gapindex) * (U.coeffRef(row + (long long)1) - U.coeffRef(connectedChannelId * (numOfBlocks + (long long)1) + (row + 1) % (numOfBlocks + (long long)1))) / A;
+					W2.insert(row, gapindex) = -(channelid < connectedChannelId ? 1 : -1) * Uk1.coeffRef(gapindex) / A;
+					W3.insert(row, gapindex) = Ck1 * (channelid < connectedChannelId ? 1 : -1) / A;
+					Ck0 += fT * wTurbulence.coeffRef(gapindex) * (U.coeffRef(row + (long long)1) - U.coeffRef(connectedChannelId * (numOfBlocks + (long long)1) + (row + (long long)1) % (numOfBlocks + (long long)1))) / A;
+					//Ck0 += (w.coeffRef(gapindex) * (channelid < connectedChannelId ? 1 : -1) * Uk1.coeffRef(gapindex) + fT * wTurbulence.coeffRef(gapindex) * (U.coeffRef(row+(long long)1) - U.coeffRef(connectedChannelId * (numOfBlocks + (long long)1) + (row + (long long)1) % (numOfBlocks + (long long)1)))) / A;
+					//Ck2 += (w.coeffRef(gapindex) * (channelid < connectedChannelId ? 1 : -1)) / A;
+					//Ck2_M.insert(0, gapindex) = Ck1 * (channelid < connectedChannelId ? 1 : -1) / A;
 				}
 			}
-			B1(row) = (-R.coeffRef(row + (long long)1)) * pow(m.coeffRef(row), 2) - g * rho.coeffRef(row + (long long)1) * cos(theta * PI / 180) + (mn.coeffRef(row + (long long)1) - m.coeffRef(row)) / A / tStep - Ck0 + Ck1 * (rho.coeffRef(row + (long long)1) - rhon.coeffRef(row + (long long)1)) / tStep;
+			//Ck2 = (Ck2_M * w)(0);
+			//B1(row) = (-R.coeffRef(row + (long long)1)) * pow(m.coeffRef(row), 2) - g * rho.coeffRef(row + (long long)1) * cos(theta * PI / 180) + (mn.coeffRef(row + (long long)1) - m.coeffRef(row)) / A / tStep - Ck0 + Ck1 * (rho.coeffRef(row + (long long)1) - rhon.coeffRef(row + (long long)1)) / tStep;
+			B1(row) = (-R.coeffRef(row + (long long)1)) * pow(m.coeffRef(row), 2) - g * rho.coeffRef(row + (long long)1) * cos(theta * PI / 180) + (mn.coeffRef(row + (long long)1) - m.coeffRef(row)) / A / tStep - Ck0 + Ck1 * ((rho.coeffRef(row + (long long)1) - rhon.coeffRef(row + (long long)1)) / tStep ) + Ck2;
+
 		}
 		else
 		{
 			W1.insert(row, row) = 1;
+			B1(row) = P(row);
 		}
 	}
+
+	Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
+	solver.compute(W1);
+	Eigen::SparseMatrix<double> I(numOfChannelData, numOfChannelData);
+	I.setIdentity();
+
+	W1_inverse = solver.solve(I);
 }

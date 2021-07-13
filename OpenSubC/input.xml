@@ -15,8 +15,8 @@
 <rQ>0</rQ>                <!--燃料棒产生的裂变功率直接进入冷却剂的比例-->
 </Calculation>
 <GeometricParameter>          <!--几何参数-->
-  <HBOUND>5</HBOUND>          
-  <WBOUND>4</WBOUND>
+  <HBOUND>10</HBOUND>          
+  <WBOUND>10</WBOUND>
   <NROD>4</NROD>              <!--燃料棒数-->
   <ROD>
   <ID>10</ID>
