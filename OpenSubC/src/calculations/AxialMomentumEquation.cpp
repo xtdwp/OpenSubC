@@ -8,6 +8,8 @@ namespace opensubc {
 
 	namespace calculation {
 		Eigen::VectorXd DPx, R, Uk1, Pk; //分别为压力梯度dP/dX、变量Rij、变量Ukj、相邻通道间的压差Pkj
+		Eigen::SparseMatrix<double> W1, W2, W3;
+		Eigen::VectorXd B1;
 	}
 }
 
@@ -20,6 +22,12 @@ void opensubc::initAxialMomentumEquation()//初始化轴向动量方程
 	Uk1.resize(numOfGapData);
 	Pk.resize(numOfGapData);	
 	Pk.setZero();
+
+	W1.resize(numOfChannelData, numOfChannelData);
+	W2.resize(numOfChannelData, numOfGapData);
+	W3.resize(numOfChannelData, numOfGapData);
+
+	B1.resize(numOfChannelData);
 }
 void opensubc::calculateAxialMomentumVectors()//计算Rij、Ukj等向量
 {
@@ -107,4 +115,39 @@ void opensubc::calculateAxialMomentumEquation()//计算压力梯度和相邻通道的压差
 		
 	}
 	
+}
+
+void opensubc::calculateAxialMatrixs()//计算W1, W2, W3和B1
+{
+	using namespace opensubc::calculation;
+	using namespace opensubc::geometry;
+	for (int row = 0; row < numOfChannelData; ++row)
+	{
+		if (row % (numOfBlocks + (long long)1) != numOfBlocks)//如果不是出口处
+		{
+			W1.insert(row, row + (long long)1) = numOfBlocks / length;
+			W1.insert(row, row) = -numOfBlocks / length;
+
+			double Ck0, Ck1;
+			unsigned channelid = row / (numOfBlocks + (long long)1);//得到对应的channelid
+			double A = channels[channelid].A;
+			Ck1 = (2 * U.coeffRef(row + (long long)1) + (length / numOfBlocks) / tStep + R.coeffRef(row + (long long)1) * A * (length / numOfBlocks) * (m.coeffRef(row + (long long)1) + m.coeffRef(row)));
+			for (auto& gapId : channels[channelid].gapIds)//遍历子通道连接的所有gap
+			{
+				unsigned connectedChannelId;
+				if (gaps[gapId].getOtherChannelId(channelid, connectedChannelId))//如果该gap确实连接了另一个子通道
+				{
+					unsigned gapindex = gapId * (numOfBlocks + (long long)1) + (row + (long long)1) % (numOfBlocks + (long long)1);//对应的gap的控制体在gap向量中的索引
+					W2.insert(row, gapindex) = -w.coeffRef(gapindex) * (channelid < connectedChannelId ? 1 : -1) * Uk1.coeffRef(gapindex) / A;
+					W3.insert(row, gapindex) = Ck1 * (w.coeffRef(gapindex) * (channelid < connectedChannelId ? 1 : -1)) / A;
+					Ck0 += fT * wTurbulence.coeffRef(gapindex) * (U.coeffRef(row + (long long)1) - U.coeffRef(connectedChannelId * (numOfBlocks + (long long)1) + (row + 1) % (numOfBlocks + (long long)1))) / A;
+				}
+			}
+			B1(row) = (-R.coeffRef(row + (long long)1)) * pow(m.coeffRef(row), 2) - g * rho.coeffRef(row + (long long)1) * cos(theta * PI / 180) + (mn.coeffRef(row + (long long)1) - m.coeffRef(row)) / A / tStep - Ck0 + Ck1 * (rho.coeffRef(row + (long long)1) - rhon.coeffRef(row + (long long)1)) / tStep;
+		}
+		else
+		{
+			W1.insert(row, row) = 1;
+		}
+	}
 }

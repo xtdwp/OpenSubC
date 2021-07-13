@@ -9,6 +9,9 @@ namespace opensubc {
 		 Eigen::SparseVector<double> v, vk, U, Uk; //分别为vij、vkj、Uij、Ukj
 		 Eigen::SparseMatrix<double> CrossMomentumA; //横向动量方程系数矩阵 
 		 Eigen::VectorXd CrossMomentumB;//常数向量
+
+		 Eigen::SparseMatrix<double> W4, W5, W4_inverse;
+		 Eigen::VectorXd B2;
 	}
 }
 
@@ -22,6 +25,12 @@ void opensubc::initCrossMomentumEquation()//初始化横向动量方程
 	Uk.resize(numOfGapData);
 	CrossMomentumA.resize(numOfGapData, numOfGapData);
 	CrossMomentumB.resize(numOfGapData);
+
+	W4.resize(numOfGapData, numOfGapData);
+	W5.resize(numOfGapData, numOfChannelData);
+	W4_inverse.resize(numOfGapData, numOfGapData);
+
+	B2.resize(numOfGapData);
 }
 void opensubc::calculateCrossMomentumVectors()//计算vij、vkj、Uij、Ukj等向量
 {
@@ -125,4 +134,54 @@ bool opensubc::checkBoundaryGap(int gapid)//判断是不是boundarygap，是则返回真
 	}
 	else
 		return false;
+}
+
+void opensubc::calculateCrossMatrixs()//计算W4, W5, W4_inverse和B2
+{
+	using namespace opensubc::calculation;
+	using namespace opensubc::geometry;
+	for (size_t row = 0; row < numOfGapData; ++row)//对每一行进行遍历
+	{
+		if (!checkInletInterval(row))//判断是不是入口虚拟网格，如果不是则进行填写
+		{
+			unsigned gapid = row / (numOfBlocks + (long long)1);
+			if (!checkBoundaryGap(gapid))//判断是不是边界通道，如果不是则进行填写
+			{
+				//计算横向动量方程系数矩阵
+				double coeffkj = length / numOfBlocks / tStep + KG * vk.coeffRef(row) * abs(w.coeffRef(row)) * length / numOfBlocks / gaps[gapid].l / gaps[gapid].s / 2;//wkj的系数
+				if (Uk.coeffRef(row) > 0)
+					coeffkj += Uk.coeffRef(row);
+				else
+					W4.insert(row, row + (long long)1) = Uk.coeffRef(row);
+				if (Uk.coeffRef(row - (long long)1) < 0)
+					coeffkj -= Uk.coeffRef(row - (long long)1);
+				else
+					W4.insert(row, row - (long long)1) = -Uk.coeffRef(row - (long long)1);
+				W4.insert(row, row) = coeffkj;
+				//计算常数向量
+				B2(row) = length / numOfBlocks / tStep * wn.coeffRef(row);
+
+				unsigned j = row % (numOfBlocks + (long long)1);
+				int e = (gaps[gapid].channelIds[0] < gaps[gapid].channelIds[1] ? 1 : -1);
+
+				W5.insert(row, gaps[gapid].channelIds[0] * (numOfBlocks + (long long)1) + j - 1) = e * gaps[gapid].s / gaps[gapid].l * length / numOfBlocks;
+				W5.insert(row, gaps[gapid].channelIds[1] * (numOfBlocks + (long long)1) + j - 1) = -e * gaps[gapid].s / gaps[gapid].l * length / numOfBlocks;
+			}
+			else
+			{
+				W4.insert(row, row) = 1;
+			}
+		}
+		else
+		{
+			W4.insert(row, row) = 1;
+		}
+	}
+
+	Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
+	solver.compute(W4);
+	Eigen::SparseMatrix<double> I(numOfGapData, numOfGapData);
+	I.setIdentity();
+
+	W4_inverse = solver.solve(I);
 }
