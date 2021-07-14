@@ -37,7 +37,7 @@ namespace opensubc {
         double fT;//横向动量因子
         double theta;//通道与竖直方向的夹角（角度值）
         double rQ;//常数，表示燃料棒产生的裂变功率直接进入冷却剂的比例；
-        double d1 = 0.8, d2 = 0.8;//w和m的次松弛因子
+        double d1 = 0.3, d2 = 0.3;//w和m的次松弛因子
     }
 }
 
@@ -335,14 +335,14 @@ void opensubc::calculate()
             }*/
             calculate_wTurbulence();//计算湍流交混速率w’
             calculate_Tw_f();//计算本次迭代的壁温和摩擦因子f
-        }while (((m_max > 1e-10)||(P_max>1e-10))&&(n<1000));//收敛条件
+        }while (((m_max > 1e-6)||(P_max>1e-6))&&(n<1000));//收敛条件
         //将本次时间步长的结果输出
         /*d1 = 0.8;
         d2 = 0.8;*/
         output(t);
         std::cout << n << std::endl;
         system("pause");
-        system("pause");
+        //system("pause");
     }
 }
 
